@@ -6,12 +6,12 @@ export const userSchema = Joi.object({
   _id: Joi.string().required(),
   name: Joi.string().required(),
   picture: Joi.string().required(),
-  typeAccount: Joi.string().required().valid('local', 'twitter'),
+  typeAccount: Joi.string().required().valid('local', 'twitter','github'),
   password: Joi.string().when('typeAccount', {
     is: 'local',
     then: Joi.string().required()
   }).when('typeAccount', {
-    is: 'twitter',
+    is: Joi.string().valid('twitter', 'github'),
     then: Joi.string().optional().allow(null)
   }),
 })
