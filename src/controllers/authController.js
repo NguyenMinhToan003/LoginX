@@ -5,8 +5,21 @@ const loginWithTwitter = async (req, res) => {
     const user = req.user
 
     if (user) {
-      console.log('>>>>>>>>>> controler', user)
       const result = await authService.loginWithTwitter(user)
+      return res.status(200).json(result)
+    }
+    // Nếu không xác thực được
+    return res.status(401).json({ message: 'Authentication failed' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+const loginWithGithub = async (req, res) => {
+   try {
+    const user = req.user
+    if (user) {
+      const result = await authService.loginWithGithub(user)
       return res.status(200).json(result)
     }
     // Nếu không xác thực được
@@ -29,5 +42,6 @@ const logout = async (req, res) => {
 
 export const authController = {
   loginWithTwitter,
+  loginWithGithub,
   logout
 }

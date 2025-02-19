@@ -7,6 +7,7 @@ import { twitterStrategy } from './passport/TwitterStrategy .js'
 import passport from 'passport'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
+import { gitHubStrategy } from './passport/githubStrategy.js'
 
 const START_SERVER = () => {
   const app = express()
@@ -24,6 +25,7 @@ const START_SERVER = () => {
   app.use(passport.session())
   // Cấu hình Passport
   twitterStrategy()  // Khởi tạo chiến lược Twitter
+  gitHubStrategy() // Khởi tạo chiến lược GitHub
   
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
