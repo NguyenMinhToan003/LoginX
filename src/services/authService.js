@@ -9,7 +9,7 @@ const loginWithTwitter = async (user) => {
     }
     const data = {
       _id: user.id,
-      name: user.displayName,
+      name: user.username,
       picture: user.photos[0].value,
       typeAccount: 'twitter',
     }
@@ -30,7 +30,7 @@ const loginWithGithub = async (user) => {
     }
     const data = {
       _id: user.id,
-      name: user.displayName,
+      name: user.username,
       picture: user.photos[0].value,
       typeAccount: 'github',
       }
