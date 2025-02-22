@@ -8,9 +8,16 @@ import passport from 'passport'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import { gitHubStrategy } from './passport/githubStrategy.js'
+import cors from 'cors'
 
 const START_SERVER = () => {
   const app = express()
+  app.use(cors(
+    {
+      origin: 'http://localhost:5173',
+      credentials: true
+    }
+  ))
   // Cấu hình session middleware
   app.use(session({
     secret: 'your-secret-key',
