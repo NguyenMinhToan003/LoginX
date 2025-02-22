@@ -6,7 +6,10 @@ const loginWithTwitter = async (req, res) => {
 
     if (user) {
       const result = await authService.loginWithTwitter(user)
-      return res.status(200).json(result)
+      if(result?.insertedId) {
+        return res.redirect(`http://localhost:5173/user/${result.insertedId}`);
+      }
+      return res.redirect(`http://localhost:5173/user/${result._id}`);
     }
     // Nếu không xác thực được
     return res.status(401).json({ message: 'Authentication failed' });
@@ -20,7 +23,10 @@ const loginWithGithub = async (req, res) => {
     const user = req.user
     if (user) {
       const result = await authService.loginWithGithub(user)
-      return res.status(200).json(result)
+      if(result?.insertedId) {
+        return res.redirect(`http://localhost:5173/user/${result.insertedId}`);
+      }
+      return res.redirect(`http://localhost:5173/user/${result._id}`);
     }
     // Nếu không xác thực được
     return res.status(401).json({ message: 'Authentication failed' });

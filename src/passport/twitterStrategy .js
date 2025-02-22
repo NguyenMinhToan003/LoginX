@@ -5,7 +5,8 @@ export const twitterStrategy = () => {
   passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: 'http://localhost:8123/api/auth/twitter/callback'
+    callbackURL: 'http://localhost:8123/api/auth/twitter/callback',
+    scope: ['user:email']
   },
   (token, tokenSecret, profile, done) => {
     // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session

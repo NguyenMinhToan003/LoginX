@@ -33,7 +33,8 @@ const loginWithGithub = async (user) => {
       name: user.displayName,
       picture: user.photos[0].value,
       typeAccount: 'github',
-    }
+      }
+
     return await userModel.createUser(data)
   }
   catch (error) {

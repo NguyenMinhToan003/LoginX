@@ -1,7 +1,7 @@
 import express from 'express'
 import passport from 'passport'
 import { authController } from '../controllers/authController.js';
-
+import { userController } from '../controllers/userController.js';
 const router = express.Router();
 
 // Đăng nhập với Twitter
@@ -30,5 +30,6 @@ router.route('/register')
 router.route('logout')
   .get(authController.logout)
 
-
+router.route('/user')
+  .post(userController.getUser)
 export const authRouter = router;
