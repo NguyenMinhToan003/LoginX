@@ -9,5 +9,8 @@ const router = express.Router();
 router.route('/getAccestoken')
   .post(roomController.getAccessToken)
 
+router.route('/getRoomToken')
+  .post(roomController.getRoomToken)
+
 
 export const roomRouter = router;
