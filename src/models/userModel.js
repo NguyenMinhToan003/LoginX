@@ -34,9 +34,18 @@ const createUser = async (user) => {
     throw error
   }
 }
+const findAllUser = async () => {
+  try {
+    const users = await GET_DB().collection(USER_COLLECTION).find({}).toArray()
+    return users
+  } catch (error) {
+    throw error
+  }
+}
 
 export const userModel = {
   USER_COLLECTION,
   findUserById,
-  createUser
+  createUser,
+  findAllUser
 }

@@ -6,7 +6,8 @@ export const gitHubStrategy = () => {
     clientID: process.env.GITHUB_ID,
     clientSecret: process.env.GITHUB_SECRET,
     callbackURL: 'http://localhost:8123/api/auth/github/callback',
-    scope: ['user:email']
+    scope: ['user:email'],
+    propmt: 'consert'
   },
   function(accessToken, refreshToken, profile, cb) {
     

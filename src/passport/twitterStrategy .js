@@ -6,18 +6,20 @@ export const twitterStrategy = () => {
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: 'http://localhost:8123/api/auth/twitter/callback',
-    scope: ['user:email']
+    scope: ['user:email'],
+    propmt: 'consert'
   },
-  (token, tokenSecret, profile, done) => {
+  (token, tokenSecret, profile, cb) => {
     // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session
-    return done(null, profile); // Lưu profile người dùng vào session
+    
+    return cb(null, profile); // Lưu profile người dùng vào session
   }));
 
-  passport.serializeUser((user, done) => {
-    done(null, user); // Lưu thông tin người dùng vào session
+  passport.serializeUser((user, cb) => {
+    cb(null, user); // Lưu thông tin người dùng vào session
   });
 
-  passport.deserializeUser((obj, done) => {
-    done(null, obj); // Khi lấy lại thông tin người dùng từ session
+  passport.deserializeUser((obj, cb) => {
+    cb(null, obj); // Khi lấy lại thông tin người dùng từ session
   });
 };

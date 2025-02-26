@@ -9,6 +9,9 @@ import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import { gitHubStrategy } from './passport/githubStrategy.js'
 import cors from 'cors'
+import http from 'http'
+
+import { socketConnection } from './socket/index.js'
 
 const START_SERVER = () => {
   const app = express()
@@ -26,7 +29,7 @@ const START_SERVER = () => {
     cookie: { secure: false }, // Đặt 'secure: true' nếu bạn sử dụng HTTPS,
     express: 24 * 60 * 60 * 1000
   }))
-
+  
   // Khởi tạo passport
   app.use(passport.initialize())
   app.use(passport.session())
@@ -52,8 +55,10 @@ const START_SERVER = () => {
       message: 'Not found'
     })
   })
+  const server = http.createServer(app)
+  socketConnection(server)
 
-  app.listen(process.env.PORT, () => {
+  server.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`)
   })
 }
