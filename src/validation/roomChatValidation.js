@@ -1,0 +1,63 @@
+import Joi from "joi"
+
+const createRoom = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      type:Joi.string().required(),
+      name:Joi.string().required(),
+      avartar:Joi.string(),
+      admins:Joi.array().items(Joi.string()).required().min(1),
+      members:Joi.array().items(Joi.string()).required().min(1),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+const joinRoom = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      roomId:Joi.string().required(),
+      admin: Joi.string().required().min(1),
+      members: Joi.array().items(Joi.string()).required().min(1),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const getRoom = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      roomId:Joi.string().required(),
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+const getRoomChatByUserId = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      userId: Joi.string().required(),
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+export const roomChatValidation = {
+  createRoom,
+  joinRoom,
+  getRoom,
+  getRoomChatByUserId
+}

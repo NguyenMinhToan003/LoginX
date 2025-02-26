@@ -1,48 +1,48 @@
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
+const apiKeySid = 'SK.0.nkqY9CFwLG4NK5bPu1lBJ60mVTVSIO'
+const apiKeySecret= 'T2ZqUjF5TlFwMHdNbnRZNnk0SjZIeTRWdVFiTDlVeUU='
 
-const apiKeySid = 'SK.0.Csa7gVEiydvB6d04ivFDgm1WkOlTdusy'; // Thay bằng giá trị thật
-const apiKeySecret = 'OEN1ZmNiVFBVb0txZDZHeHdqVTk1V1Y4eVJZQlQ4SnY='; // Thay bằng giá trị thật
 
-const getAccessToken = (id) => {
-  const userId = id;
-  const now = Math.floor(Date.now() / 1000);
-  const exp = now + 3600; // Token hết hạn sau 1 giờ
 
-  const header = { cty: 'stringee-api;v=1' };
-  const payload = {
-    jti: `${apiKeySid}-${now}`,
-    iss: apiKeySid,
-    exp: exp,
-    userId: userId,
-    rest_api: true,
+
+function generateAccessToken() {
+	var now = Math.floor(Date.now() / 1000);
+	var exp = now + 3600;
+
+	var header = {cty: "stringee-api;v=1"};
+	var payload = {
+		jti: apiKeySid + "-" + now,
+		iss: apiKeySid,
+		exp: exp,
+		rest_api: true
+	};
+	var token = jwt.sign(payload, apiKeySecret, {algorithm: 'HS256', header: header})
+	return token;
+}
+
+const generateRoomToken = (roomId) => {
+  const header = {
+    typ: 'JWT',
+    alg: 'HS256',
+    cty: 'stringee-api;v=1'
   };
 
-  return jwt.sign(payload, apiKeySecret, { algorithm: 'HS256', header: header });
-};
-
-
-
-const getRoomToken = (roomId) => {
-  var now = Math.floor(Date.now() / 1000);
-  var exp = now + 3600;
-
-  var header = { cty: "stringee-api;v=1" };
-  var payload = {
-    'jti': `${apiKeySid}-${now}`,
-    'iss': apiKeySid,
-    'exp': exp,
-    'roomId': roomId,
-    'permissions': {
-      'publish': true,
-      'subscribe': true,
-      'control_room': true
+  const payload = {
+    jti: `${apiKeySid}_room_${Date.now()}`,
+    iss: apiKeySid,
+    exp: Math.floor(Date.now() / 1000) + 3600,
+    roomId: roomId,
+    permissions: {
+      publish: true,
+      subscribe: true,
+      control_room: true
     }
   };
 
-  var token = jwt.sign(payload, apiKeySecret, { algorithm: 'HS256', header: header })
-  return token;
+  return jwt.sign(payload, apiKeySecret, { header });
 }
+
 export const tokenStringee = {
-  getAccessToken,
-  getRoomToken
+  generateAccessToken,
+  generateRoomToken
 }
