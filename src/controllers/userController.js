@@ -4,7 +4,7 @@ const getUser = async (req,res) => {
   try {
     const { id } = req.body
     const user = await userModel.findUserById(id)
-    console.log(user)
+
     if (user) {
       return res.status(200).json(user)
     }
@@ -17,7 +17,7 @@ const getUser = async (req,res) => {
 const getAllUser= async (req,res) => {
   try {
     const user = await userModel.findAllUser()
-    console.log(user)
+
     if (user) {
       return res.status(200).json(user)
     }
