@@ -4,7 +4,7 @@ import { roomChatModel } from "../models/roomChatModel.js"
 const createMessage = async (roomId, sender, content) => {
   try {
     const room = await roomChatModel.findRoomById(roomId)
-    console.log(room)
+
     if(room) {
       if(room?.members.includes(sender)) {
         const message = await messageModel.createMessage(roomId, sender, content)
