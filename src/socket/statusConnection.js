@@ -1,5 +1,5 @@
 let listUsers = []
-export const statusConnection = (socket, io) => {
+export const StatusConnection = (socket, io) => {
   
   socket.on('disconnect', () => {
     console.log('disconnect', listUsers)

@@ -4,13 +4,10 @@ import { roomVideoCallController } from '../controllers/roomVideoCallController.
 
 const router = express.Router();
 
-// Đăng nhập với Twitter
-router.route('/getAccessToken')
-  .get(
-    roomVideoCallValidation.roomVideoCallController,
-    roomVideoCallController.getAccessToken)
-
-router.route('/getRoomVideoCallToken')
-  .get(roomVideoCallValidation.getRoomToken,roomVideoCallController.getRoomToken)
-
+router.route('/create-room')
+  .post(roomVideoCallController.createRoom)
+router.route('/get-user-token')
+  .post(roomVideoCallValidation.getUserToken, roomVideoCallController.getUserToken)
+router.route('/get-room-token')
+  .post(roomVideoCallValidation.getRoomToken, roomVideoCallController.getRoomToken)
 export const roomVideoCallRouter = router;

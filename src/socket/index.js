@@ -1,6 +1,8 @@
 import { Server } from "socket.io"
-import { chatSocket } from "./chat.js"
-import { statusConnection } from "./statusConnection.js"
+
+import { CallVideo } from "./call.js"
+import { StatusConnection } from "./statusConnection.js"
+import { ChatSocket } from "./chat.js"
 
 export const socketConnection = (server) => {
   const io = new Server(server, {
@@ -11,7 +13,8 @@ export const socketConnection = (server) => {
   })
   io.on('connection', (socket) => {
     
-    chatSocket(socket, io)
-    statusConnection(socket, io)
+    StatusConnection(socket, io)
+    ChatSocket(socket, io)
+    CallVideo(socket, io)
     })
 }
