@@ -9,5 +9,4 @@ router.route('/')
 router.route('/all')
   .get(userController.getAllUser)
 
-
 export const userRouter = router;

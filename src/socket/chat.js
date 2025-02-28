@@ -1,4 +1,4 @@
-export const chatSocket = (socket,io) => {
+export const ChatSocket = (socket,io) => {
     socket.on('join-room', (data) => {
       socket.join(data.roomId)
     })
