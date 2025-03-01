@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node ./dist/server.js",
-    "build": "babel src -d dist",
-    "dev": "nodemon --exec babel-node src/server.js",
-    "production": "npm build && npm start"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "axios": "^1.7.9",
