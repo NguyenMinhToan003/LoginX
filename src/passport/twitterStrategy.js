@@ -5,7 +5,7 @@ export const twitterStrategy = () => {
   passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: `${process.env.PORT}/api/auth/twitter/callback`,
+    callbackURL: `${process.env.HOST_CALLBACK_PASSPORT}/api/auth/twitter/callback`,
     scope: ['user:email'],
     propmt: 'consert'
   },
