@@ -84,7 +84,7 @@ const findRoomChatByUserId = async (userId)=>{
     const rooms = GET_DB().collection(ROOMCHAT_COLLECTION).find(
       { members: { $in: [userId] } },
       {
-        $sort: { createdAt: -1 }
+        $sort: { createdAt: 1 }
       }
     ).toArray()
     return rooms

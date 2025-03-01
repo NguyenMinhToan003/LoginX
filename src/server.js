@@ -3,7 +3,7 @@ import 'dotenv/config'
 import bodyParser from 'body-parser'
 import { CONNECT_DB, GET_DB } from './configs/db.js'
 import { APIs_v1 } from './routers/index.js'
-import { twitterStrategy } from './passport/TwitterStrategy.js' 
+import { twitterStrategy } from './passport/twitterStrategy.js' 
 import passport from 'passport'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
@@ -17,7 +17,7 @@ const START_SERVER = () => {
   const app = express()
   app.use(cors(
     {
-      origin: 'http://localhost:5173',
+      origin: 'http://192.168.1.165:5173',
       credentials: true
     }
   ))

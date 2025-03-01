@@ -5,7 +5,7 @@ export const gitHubStrategy = () => {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_ID,
     clientSecret: process.env.GITHUB_SECRET,
-    callbackURL: 'http://localhost:8123/api/auth/github/callback',
+    callbackURL: `${process.env.HOST_CALLBACK_PASSPORT}/api/auth/github/callback`,
     scope: ['user:email'],
     propmt: 'consert'
   },
