@@ -17,11 +17,11 @@ const START_SERVER = () => {
   const app = express()
   app.use(cors(
     {
-      origin: 'http://192.168.1.165:5173',
+      origin: 'http://localhost:5173',
       credentials: true
     }
   ))
-  // Cấu hình session middleware
+
   app.use(session({
     secret: 'your-secret-key',
     resave: true,
