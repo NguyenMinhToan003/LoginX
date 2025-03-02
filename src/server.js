@@ -22,7 +22,6 @@ const START_SERVER = () => {
     }
   ))
 
-  // Cấu hình session middleware
   app.use(session({
     secret: 'your-secret-key',
     resave: true,
