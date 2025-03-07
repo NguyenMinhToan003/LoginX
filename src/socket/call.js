@@ -1,29 +1,32 @@
 export const CallVideo = (socket, io) => {
-  socket.on('join-room', (roomId) => {
+  // Xử lý khi người dùng tham gia phòng
+  socket.on('join-room', ({ roomId, peerId }) => {
     socket.join(roomId);
-    
+    console.log(`User ${socket.id} joined room ${roomId} with peerId ${peerId}`);
+
+    // Thông báo peerId của người mới tham gia tới các client khác trong phòng
+    socket.to(roomId).emit('user-joined', { peerId });
+
+    // Cập nhật số lượng thành viên
     const room = io.sockets.adapter.rooms.get(roomId);
     const clients = room ? room.size : 0;
     io.to(roomId).emit('getRoomCountMember', clients);
   });
 
+  // Xử lý khi người dùng rời phòng
   socket.on('leave-room', (roomId) => {
     socket.leave(roomId);
+    console.log(`User ${socket.id} left room ${roomId}`);
 
+    // Cập nhật số lượng thành viên
     const room = io.sockets.adapter.rooms.get(roomId);
     const clients = room ? room.size : 0;
-
     io.to(roomId).emit('getRoomCountMember', clients);
   });
 
-  socket.on('webrtc-signal', (data) => {
-    
-    socket.to(data.roomId).emit('webrtc-signal', data.sdp);
-
-  });
-
+  // Xử lý yêu cầu gọi video
   socket.on('call-video', (data) => {
-  
+    console.log('Call video request:', data);
     io.to(data.receiver.socketId).emit('iscomming-call', {
       isRinging: true,
       sender: {
@@ -38,7 +41,6 @@ export const CallVideo = (socket, io) => {
   });
 
   socket.on('hangup-call', (data) => {
-    
     io.to(data.receiver.socketId).emit('hangup-call', {
       isRinging: false,
       sender: data.sender,
@@ -47,6 +49,9 @@ export const CallVideo = (socket, io) => {
   });
 
   socket.on('accept-call', (data) => {
+    console.log('Accept call:', data);
     io.to(data.receiver.socketId).emit('accept-call', data);
   });
+
+  
 };
