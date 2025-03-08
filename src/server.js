@@ -12,12 +12,13 @@ import cors from 'cors'
 import http from 'http'
 
 import { socketConnection } from './socket/index.js'
+import { ExpressPeerServer } from 'peer'
 
 const START_SERVER = () => {
   const app = express()
   app.use(cors(
     {
-      origin: 'http://localhost:5173',
+      origin: process.env.FRONTEND_ENDPOINT,
       credentials: true
     }
   ))
@@ -56,6 +57,10 @@ const START_SERVER = () => {
     })
   })
   const server = http.createServer(app)
+  const peerServer = ExpressPeerServer(server, {
+  path: '/peerjs',
+  debug: true,
+});
   socketConnection(server)
 
   server.listen(process.env.PORT || 4000, () => {

@@ -1,10 +1,6 @@
 export const CallVideo = (socket, io) => {
-  // Xử lý khi người dùng tham gia phòng
   socket.on('join-room', ({ roomId, peerId }) => {
     socket.join(roomId);
-    console.log(`User ${socket.id} joined room ${roomId} with peerId ${peerId}`);
-
-    // Thông báo peerId của người mới tham gia tới các client khác trong phòng
     socket.to(roomId).emit('user-joined', { peerId });
 
     // Cập nhật số lượng thành viên
@@ -18,7 +14,6 @@ export const CallVideo = (socket, io) => {
     socket.leave(roomId);
     console.log(`User ${socket.id} left room ${roomId}`);
 
-    // Cập nhật số lượng thành viên
     const room = io.sockets.adapter.rooms.get(roomId);
     const clients = room ? room.size : 0;
     io.to(roomId).emit('getRoomCountMember', clients);
