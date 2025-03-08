@@ -12,7 +12,7 @@ export const CallVideo = (socket, io) => {
   // Xử lý khi người dùng rời phòng
   socket.on('leave-room', (roomId) => {
     socket.leave(roomId);
-    console.log(`User ${socket.id} left room ${roomId}`);
+
 
     const room = io.sockets.adapter.rooms.get(roomId);
     const clients = room ? room.size : 0;
@@ -21,7 +21,7 @@ export const CallVideo = (socket, io) => {
 
   // Xử lý yêu cầu gọi video
   socket.on('call-video', (data) => {
-    console.log('Call video request:', data);
+
     io.to(data.receiver.socketId).emit('iscomming-call', {
       isRinging: true,
       sender: {

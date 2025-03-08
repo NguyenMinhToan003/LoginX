@@ -6,7 +6,6 @@ export const StatusConnection = (socket, io) => {
     if (index !== -1) {
       listUsers.splice(index, 1); 
     }
-
     io.emit("getListUsers", listUsers);
   });
   socket.emit("getListUsers", listUsers);
