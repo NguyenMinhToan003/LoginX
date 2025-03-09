@@ -1,5 +1,5 @@
 import { userModel } from "../models/userModel.js"
-
+import { userService } from "../services/userService.js"
 const getDatUser = async (req,res) => {
   try {
     const { id } = req.query
@@ -28,7 +28,32 @@ const getAllUser= async (req,res) => {
   }
 }
 
+const addFriendRequest = async (req, res) => {
+  try {
+    const { userId, friendId } = req.body
+    const result = await userService.addFriendRequest(userId, friendId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const respondFriendRequest = async (req, res) => {
+  try {
+    const { friendRequestId, status, userAction } = req.body
+    const result = await userService.respondFriendRequest(friendRequestId, status, userAction)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const userController = {
   getDatUser,
-  getAllUser
+  getAllUser,
+  addFriendRequest,
+  respondFriendRequest,
+  
 }

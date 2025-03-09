@@ -27,8 +27,22 @@ const getAllMessage = async (req, res, next) => {
     return res.status(400).json({ message: error.message })
   }
 }
+const deleteMessage = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      userId: Joi.string().required(),
+      messageId: Joi.string().required(),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
 
 export const messageValidation = {
   createMessage,
-  getAllMessage
+  getAllMessage,
+  deleteMessage
 }

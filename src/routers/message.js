@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.route('/create')
   .post(messageValidation.createMessage, messageController.createMessage)
+router.route('/delete')
+  .post(messageValidation.deleteMessage, messageController.deleteMessage)
 router.route('/all')
   .post(messageValidation.getAllMessage,messageController.getAllMessage)
 
