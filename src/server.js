@@ -3,11 +3,11 @@ import 'dotenv/config'
 import bodyParser from 'body-parser'
 import { CONNECT_DB, GET_DB } from './configs/db.js'
 import { APIs_v1 } from './routers/index.js'
-import { twitterStrategy } from './passport/twitterStrategy.js' 
+import { twitterStrategy } from './middleware/passport/twitterStrategy.js' 
 import passport from 'passport'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
-import { gitHubStrategy } from './passport/githubStrategy.js'
+import { gitHubStrategy } from './middleware/passport/githubStrategy.js'
 import cors from 'cors'
 import http from 'http'
 
@@ -34,6 +34,13 @@ const START_SERVER = () => {
   // Khởi tạo passport
   app.use(passport.initialize())
   app.use(passport.session())
+  passport.serializeUser((user, cb) => {
+    cb(null, user); // Lưu thông tin người dùng vào session
+  });
+
+  passport.deserializeUser((obj, cb) => {
+    cb(null, obj); // Khi lấy lại thông tin người dùng từ session
+  });
   // Cấu hình Passport
   twitterStrategy()  // Khởi tạo chiến lược Twitter
   gitHubStrategy() // Khởi tạo chiến lược GitHub

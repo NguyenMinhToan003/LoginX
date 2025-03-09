@@ -1,3 +1,4 @@
+import { genarateToken } from "~/middleware/jwt/token.js";
 import { authService } from "../services/authService.js"
 
 const loginWithTwitter = async (req, res) => {
@@ -6,10 +7,13 @@ const loginWithTwitter = async (req, res) => {
 
     if (user) {
       const result = await authService.loginWithTwitter(user)
-      if(result?.insertedId) {
-        return res.redirect(`${process.env.FRONTEND_ENDPOINT}/user/${result.insertedId}`);
+
+      if (result?.insertedId) {
+        const token = await genarateToken({_id:result.insertedId})
+        return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
       }
-      return res.redirect(`${process.env.FRONTEND_ENDPOINT}/user/${result._id}`);
+      const token = await genarateToken({_id:result._id})
+      return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
     }
     // Nếu không xác thực được
     return res.status(401).json({ message: 'Authentication failed' });
@@ -20,13 +24,16 @@ const loginWithTwitter = async (req, res) => {
 
 const loginWithGithub = async (req, res) => {
    try {
-    const user = req.user
+     const user = req.user
     if (user) {
       const result = await authService.loginWithGithub(user)
-      if(result?.insertedId) {
-        return res.redirect(`${process.env.FRONTEND_ENDPOINT}/user/${result.insertedId}`);
+      
+      if (result?.insertedId) {
+        const token = await genarateToken({_id:result.insertedId})
+        return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
       }
-      return res.redirect(`${process.env.FRONTEND_ENDPOINT}/user/${result._id}`);
+      const token = await genarateToken({_id:result._id})
+      return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
     }
     // Nếu không xác thực được
     return res.status(401).json({ message: 'Authentication failed' });
@@ -35,19 +42,21 @@ const loginWithGithub = async (req, res) => {
   }
 }
 
-const logout = async (req, res) => {
+const decodeTokenLogin = async (req, res) => {
   try {
-    res.clearCookie('connect.sid')
-    res.session.destroy()
-    res.redirect('/')
-  }
-  catch (error) {
-    throw error
+    const { token } = req.query
+    const user = await authService.decodeTokenLogin(token)
+    if (user) {
+      return res.status(200).json(user)
+    }
+    return res.status(404).json({ message: 'not user' })
+  } catch (error) {
+    return res.status(400).json({ message: error.message })
   }
 }
 
 export const authController = {
   loginWithTwitter,
   loginWithGithub,
-  logout
+  decodeTokenLogin
 }

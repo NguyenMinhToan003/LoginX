@@ -1,5 +1,5 @@
 import express from 'express'
-import { roomChatValidation } from '../validation/roomChatValidation.js';
+import { roomChatValidation } from '../validations/roomChatValidation.js';
 import { roomChatController } from '../controllers/roomChatController.js';
 
 
