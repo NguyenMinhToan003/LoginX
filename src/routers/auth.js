@@ -23,13 +23,9 @@ router.route('/github/callback')
     authController.loginWithGithub
   )
 
-// register 
-router.route('/register')
-  .post()
-
-router.route('logout')
-  .get(authController.logout)
+router.route('/decode-token-login')
+  .get(authController.decodeTokenLogin)
 
 router.route('/user')
-  .post(userController.getUser)
+  .get(userController.getDatUser)
 export const authRouter = router;

@@ -1,8 +1,8 @@
 import { userModel } from "../models/userModel.js"
 
-const getUser = async (req,res) => {
+const getDatUser = async (req,res) => {
   try {
-    const { id } = req.body
+    const { id } = req.query
     const user = await userModel.findUserById(id)
 
     if (user) {
@@ -29,6 +29,6 @@ const getAllUser= async (req,res) => {
 }
 
 export const userController = {
-  getUser,
+  getDatUser,
   getAllUser
 }

@@ -1,3 +1,4 @@
+import { verifyToken } from "../middleware/jwt/token.js"
 import { userModel } from "../models/userModel.js"
 
 const loginWithTwitter = async (user) => {
@@ -41,8 +42,23 @@ const loginWithGithub = async (user) => {
     throw error
   }
 }
+const decodeTokenLogin = async (token) => {
+  try {
+    const decode = await verifyToken(token)
+    const user = await userModel.findUserById(decode._id)
+
+    if (user) {
+      return user
+    }
+    return null
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const authService = {
   loginWithTwitter,
-  loginWithGithub
+  loginWithGithub,
+  decodeTokenLogin
 }

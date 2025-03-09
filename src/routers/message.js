@@ -1,5 +1,5 @@
 import express from 'express'
-import { messageValidation } from '../validation/messageValidation.js';
+import { messageValidation } from '../validations/messageValidation.js';
 import { messageController } from '../controllers/messageController.js';
 
 const router = express.Router();

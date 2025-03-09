@@ -14,12 +14,4 @@ export const twitterStrategy = () => {
     
     return cb(null, profile); // Lưu profile người dùng vào session
   }));
-
-  passport.serializeUser((user, cb) => {
-    cb(null, user); // Lưu thông tin người dùng vào session
-  });
-
-  passport.deserializeUser((obj, cb) => {
-    cb(null, obj); // Khi lấy lại thông tin người dùng từ session
-  });
 };
