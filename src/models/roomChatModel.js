@@ -1,6 +1,7 @@
-import Joi from "joi"
-import { GET_DB } from "../configs/db.js"
-import { ObjectId } from "mongodb"
+import Joi from 'joi'
+import { GET_DB } from '../configs/db.js'
+import { ObjectId } from 'mongodb'
+import { messageModel } from './messagesModel.js'
 
 const ROOMCHAT_COLLECTION = 'roomchats'
 const ROOMCHAT_SCHEMA = Joi.object({
@@ -94,12 +95,61 @@ const findRoomChatByUserId = async (userId)=>{
     throw error
   }
 }
+
+const deleteRoom = async (roomId) => {
+  try {
+    const deleteMessage = await GET_DB().collection(messageModel.MESSAGE_COLLECTION).deleteMany({ roomId: roomId })
+    const result = await GET_DB().collection(ROOMCHAT_COLLECTION).deleteOne({ _id: new ObjectId(roomId) })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const leaveRoom = async (roomId, userId) => {
+  try {
+    const result = await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
+      { _id: new ObjectId(roomId) },
+      { $pull: { members: userId } }
+    )
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const updateInfoRoom = async (roomId, name, avartar, admins, membersUpdate) => {
+  try {
+    const result = await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
+      { _id: new ObjectId(roomId) },
+      {
+        $set: {
+          'info.name': name,
+          'info.avartar': avartar,
+          'info.admins': admins,
+          'members': membersUpdate,
+          'updatedAt': Date.now()
+        }
+      }
+    )
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const roomChatModel = {
   ROOMCHAT_COLLECTION,
   ROOMCHAT_SCHEMA,
   createRoom,
   findRoomById,
   joinRoom,
+  deleteRoom,
   findInfoRoomChatById,
-  findRoomChatByUserId
+  findRoomChatByUserId,
+  leaveRoom,
+  updateInfoRoom
 }

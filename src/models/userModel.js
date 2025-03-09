@@ -14,6 +14,10 @@ export const userSchema = Joi.object({
     is: Joi.string().valid('twitter', 'github'),
     then: Joi.string().optional().allow(null)
   }),
+  friends: Joi.array().items(Joi.string()).default([]),
+  posts: Joi.array().items(Joi.string()).default([]),
+  createdAt: Joi.date().timestamp().default(Date.now()),
+  updatedAt: Joi.date().timestamp().default(null),
 })
 
 const findUserById = async (id) => {
@@ -42,10 +46,27 @@ const findAllUser = async () => {
     throw error
   }
 }
+const addFriend = async (userId, friendId) => {
+  try {
+    await GET_DB().collection(USER_COLLECTION).updateOne(
+      { _id: userId },
+      { $addToSet: { friends: friendId } }
+    )
+    await GET_DB().collection(USER_COLLECTION).updateOne(
+      { _id: friendId },
+      { $addToSet: { friends: userId } }
+    )
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 
 export const userModel = {
   USER_COLLECTION,
   findUserById,
   createUser,
-  findAllUser
+  findAllUser,
+  addFriend
 }

@@ -12,8 +12,8 @@ const createRoom = async (req, res) => {
 }
 const joinRoom = async (req, res) => {
   try {
-    const { roomId, admin, members } = req.body
-    const result = await roomChatService.joinRoom(roomId, admin, members)
+    const { roomId, members } = req.body
+    const result = await roomChatService.joinRoom(roomId, members)
     return res.status(200).json(result)
   }
   catch (error) {
@@ -41,9 +41,51 @@ const getRoomChatByUserId = async (req, res) => {
   }
 }
 
+const deleteRoom = async (req, res) => {
+  try {
+    const { roomId, userId } = req.body
+    const result = await roomChatService.deleteRoom(roomId,userId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const leaveRoom = async (req, res) => {
+  try {
+    const { roomId, userId } = req.body
+    const result = await roomChatService.leaveRoom(roomId,userId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const updateInfoRoom = async (req, res) => {
+  try {
+    const { roomId, name, avartar, admins, userAction } = req.body
+    const result = await roomChatService.updateInfoRoom(
+      roomId,
+      name,
+      avartar,
+      admins,
+      userAction
+    )
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const roomChatController = {
   createRoom,
   joinRoom,
   getRoom,
-  getRoomChatByUserId
+  deleteRoom,
+  getRoomChatByUserId,
+  leaveRoom,
+   updateInfoRoom
 }

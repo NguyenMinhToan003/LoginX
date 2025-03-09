@@ -22,7 +22,19 @@ const getAllMessage = async (req, res) => {
   }
 }
 
+const deleteMessage = async (req, res) => {
+  try {
+    const { userId, messageId } = req.body
+    const result = await messageService.deleteMessage(userId, messageId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const messageController = {
   createMessage,
-  getAllMessage
+  getAllMessage,
+  deleteMessage
 }

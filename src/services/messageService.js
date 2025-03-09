@@ -38,7 +38,27 @@ const getAllMessage = async (roomId, userId) => {
   }
 }
 
+const deleteMessage = async (userId, messageId) => {
+  try {
+    const message = await messageModel.findMessageById(messageId)
+    if (!message) return { message: "Message not found" }
+    if (message?.sender !== userId)
+      return { message: "You are not sender of this message" }
+    if(message?.status === "delete")
+      return { message: "This message has been deleted" }
+    const result = await messageModel.deleteMessage(messageId)
+    return {
+      ...result,
+      message: "Delete message success"
+    }
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const messageService = {
   createMessage,
-  getAllMessage
+  getAllMessage,
+  deleteMessage
 }
