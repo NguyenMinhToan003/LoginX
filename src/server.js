@@ -12,6 +12,7 @@ import cors from 'cors'
 import http from 'http'
 
 import { socketConnection } from './socket/index.js'
+import { configCloudinary } from './configs/cloudinary.js'
 
 const START_SERVER = () => {
   const app = express()
@@ -48,6 +49,9 @@ const START_SERVER = () => {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
   app.use(cookieParser())
+
+  // Cấu hình Cloudinary
+  configCloudinary()
 
   // Sử dụng router
   app.use('/api', APIs_v1)

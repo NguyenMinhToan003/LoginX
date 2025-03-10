@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 import 'dotenv/config' // Đảm bảo bạn đã cấu hình biến môi trường
-import { removeFile } from '../middle/multer'
+import { removeFile } from '~/middleware/multer/multer' 
 
 // Cấu hình Cloudinary
 
@@ -19,7 +19,7 @@ export const uploadFilesToCloudinary = async (files) => {
   for (const file of files) {
     try {
       const result = await cloudinary.uploader.upload(file.url, {
-        folder: 'CHAT_X', // Thư mục trên Cloudinary
+        folder: 'CHAT_LOGIN_X', // Thư mục trên Cloudinary
         resource_type: 'auto'// Loại file
       })
 
@@ -27,9 +27,9 @@ export const uploadFilesToCloudinary = async (files) => {
         url: result.secure_url, // URL file trên Cloudinary
         public_id: result.public_id // ID file trên Cloudinary
       })
-      removeFile(file.url)
+      await removeFile(file.url)
     } catch (error) {
-      console.error('Error uploading file:', file.url, error.message)
+      console.error('error cloundinary :', file.url, error.message)
     }
   }
 

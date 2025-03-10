@@ -28,8 +28,7 @@ const createMessage = async (roomId, sender, content) => {
 const getAllMessage = async (roomId) => {
   try {
     return await GET_DB().collection(MESSAGE_COLLECTION).find(
-      { roomId },
-      
+      { roomId },    
     ).toArray()
   }
   catch (error) {
