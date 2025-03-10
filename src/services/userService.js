@@ -1,4 +1,5 @@
-import { friendRequestModel } from "~/models/friend_requests"
+
+import { friendRequestModel } from "~/models/friend_requestsModel"
 import { userModel } from "~/models/userModel"
 
 const addFriendRequest = async (userId, friendId) => {

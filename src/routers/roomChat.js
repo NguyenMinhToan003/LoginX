@@ -7,26 +7,24 @@ import { roomChatController } from '../controllers/roomChatController.js';
 const router = express.Router();
 
 
-router.route('/createRoom')
+router.route('/create')
   .post(roomChatValidation.createRoom, roomChatController.createRoom)
 
-router.route('/joinRoom')
+router.route('/join')
   .post(roomChatValidation.joinRoom, roomChatController.joinRoom)
 
-router.route('/getRoom')
+router.route('/get-room-info')
   .get(roomChatValidation.getRoom, roomChatController.getRoom)
-
-router.route('/getRoomChatByUserId')
+// lay thong tin phong chat so huu
+router.route('/get-list-room-info-by-userId')
   .get(roomChatValidation.getRoomChatByUserId, roomChatController.getRoomChatByUserId)
-
-router.route('/deleteRoom')
+// xoa phong chat
+router.route('/delete')
   .post(roomChatValidation.deleteRoom, roomChatController.deleteRoom)
-
-router.route('/leaveRoom')
+// thoat khoi phong chat
+router.route('/leave')
   .post(roomChatValidation.leaveRoom, roomChatController.leaveRoom)
-
-router.route('/updateInfoRoom')
+// cap nhat thong tin phong chat
+router.route('/update-info')
   .post(roomChatValidation.updateInfoRoom, roomChatController.updateInfoRoom)
-
-
 export const roomChatRouter = router;
