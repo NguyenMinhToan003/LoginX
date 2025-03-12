@@ -26,9 +26,32 @@ const createPost = async (data) => {
   }
 }
 
-const findPostsByAuthorId = async (authorId) => {
+const findPostsByAuthorId = async (query) => {
   try {
-    const result = await GET_DB().collection(POST_COLLECTION).find(authorId).toArray()
+    const result = await GET_DB().collection(POST_COLLECTION).aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'author'
+        }
+      },
+      { $unwind: '$author' },
+      {
+        $project: {
+          title: 1,
+          content: 1,
+          assets: 1,
+          'author._id': 1,
+          'author.name': 1,
+          'author.picture': 1,
+          createdAt: 1,
+          updatedAt: 1
+        }
+      }
+    ]).toArray()
     return result
   }
   catch (error) {
@@ -36,9 +59,29 @@ const findPostsByAuthorId = async (authorId) => {
   }
 }
 
+const findPostById = async (postId) => {
+  try {
+    const result = await GET_DB().collection(POST_COLLECTION).findOne({ _id:new ObjectId(postId) })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+const deletePost = async (postId) => {
+  try {
+    const result = await GET_DB().collection(POST_COLLECTION).deleteOne({ _id:new ObjectId(postId) })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const postModel = {
   POST_COLLECTION,
   createPost,
-  findPostsByAuthorId
+  findPostsByAuthorId,
+  findPostById,
+  deletePost
 }

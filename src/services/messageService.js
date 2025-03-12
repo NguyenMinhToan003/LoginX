@@ -6,7 +6,7 @@ const createMessage = async (roomId, sender, content) => {
     const room = await roomChatModel.findRoomById(roomId)
 
     if(room) {
-      if(room?.members.includes(sender)) {
+      if(room?.members.includes(sender)|| room?.info?.admins.includes(sender)) {
         const message = await messageModel.createMessage(roomId, sender, content)
         return {
           ...message,

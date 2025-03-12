@@ -27,9 +27,32 @@ const createMessage = async (roomId, sender, content) => {
 }
 const getAllMessage = async (roomId) => {
   try {
-    return await GET_DB().collection(MESSAGE_COLLECTION).find(
-      { roomId },    
-    ).toArray()
+    return await GET_DB().collection(MESSAGE_COLLECTION).aggregate([
+      { $match: { roomId: roomId } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'sender',
+          foreignField: '_id',
+          as: 'sender'
+        }
+      },
+      {
+        $unwind: '$sender'
+      },
+      {
+        $project: {
+          'sender.name': 1,
+          content: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          'sender._id': 1,
+          'sender.name': 1,
+          'sender.picture':1
+        }
+      }
+    ]).toArray()
   }
   catch (error) {
     throw error

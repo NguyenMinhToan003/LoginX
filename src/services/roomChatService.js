@@ -4,11 +4,11 @@ const createRoom = async (type, name, avartar, admins, members) => {
   try {
     const uniqueAdmins = admins.filter(
       (admin, index) => admins.indexOf(admin) === index);
+    members = [...members, ...uniqueAdmins]
     const uniqueMembers = members.filter(
       (member, index) => members.indexOf(member) === index);
-    const membersUpdate = uniqueMembers.filter(
-      member => !uniqueAdmins.includes(member))
-    return await roomChatModel.createRoom(type, name, avartar, uniqueAdmins, membersUpdate)
+    
+    return await roomChatModel.createRoom(type, name, avartar, uniqueAdmins, uniqueMembers)
   }
   catch (error) {
     throw error
@@ -90,15 +90,16 @@ const updateInfoRoom = async (roomId, name, avartar, admins, userAction) => {
       (admin, index) => admins.indexOf(admin) === index);
 
     
-    const membersUpdate = room.members.filter(
-      member => !uniqueAdmins.includes(member))
+    const membersUpdate = [...room.members, ...uniqueAdmins]
+    const uniqueMembers = membersUpdate.filter(
+      (member, index) => membersUpdate.indexOf(member) === index);
 
     const result = await roomChatModel.updateInfoRoom(
       roomId,
       name,
       avartar,
       uniqueAdmins,
-      membersUpdate
+      uniqueMembers
     )
     return {
       ...result,
