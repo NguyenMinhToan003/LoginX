@@ -19,6 +19,7 @@ const getAllMessage = async (req, res, next) => {
     const schema = Joi.object({
       roomId: Joi.string().required(),
       userId: Joi.string().required(),
+
     })
     await schema.validateAsync(req.body, { abortEarly: false })
     next()
