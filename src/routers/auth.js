@@ -24,23 +24,6 @@ router.route('/github/callback')
     authController.loginWithGithub
   )
 
-// Đăng nhập với LinkedIn
-router.route('/linkedin')
-  .get(
-    passport.authenticate('linkedin'),
-    function (req, res) {
-      // The request will be redirected to Linkedin for authentication, so this
-      // function will not be called.
-    }
-  )
-
-router.route('/linkedin/callback')
-  .get(
-    passport.authenticate('linkedin', { failureRedirect: '/' }),
-    function (req, res) {
-      return res.json(req.user)
-    }
-  )
 
 
 
