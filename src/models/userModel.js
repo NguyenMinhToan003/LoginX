@@ -62,11 +62,24 @@ const addFriend = async (userId, friendId) => {
   }
 }
 
+const findUserByQuery = async (query) => {
+  try {
+    const users = await GET_DB().collection(USER_COLLECTION).aggregate([
+      { $match: query },
+      { $project: { password: 0 } }
+    ]).toArray()
+    return users
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const userModel = {
   USER_COLLECTION,
   findUserById,
   createUser,
   findAllUser,
-  addFriend
+  addFriend,
+  findUserByQuery
 }

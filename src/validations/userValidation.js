@@ -29,7 +29,21 @@ const respondFriendRequest = async (req, res, next) => {
   }
 }
 
+const searchUser = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      name: Joi.string(),
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const userValidation = {
   addFriendRequest,
-  respondFriendRequest
+  respondFriendRequest,
+  searchUser
 }

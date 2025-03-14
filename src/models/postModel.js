@@ -78,10 +78,56 @@ const deletePost = async (postId) => {
   }
 }
 
+const findPostByQuery = async ({ title, authorName }) => {
+  try {
+    const posts = await GET_DB().collection(POST_COLLECTION).aggregate([
+      {
+        $match: {
+          $or: [
+            { title: { $regex: title, $options: 'i' } },
+            { content: { $regex: title, $options: 'i' } }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'author'
+        }
+      },
+      { $unwind: '$author' },
+      {
+        $match: { 'author.name': { $regex: authorName, $options: 'i' } }
+      },
+      {
+        $project: {
+          title: 1,
+          content: 1,
+          assets: 1,
+          'author._id': 1,
+          'author.name': 1,
+          'author.picture': 1,
+          createdAt: 1,
+          updatedAt: 1
+        }
+      }
+    ]).toArray()
+    return posts 
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+  
+
 export const postModel = {
   POST_COLLECTION,
   createPost,
   findPostsByAuthorId,
   findPostById,
-  deletePost
+  deletePost,
+  findPostByQuery
 }

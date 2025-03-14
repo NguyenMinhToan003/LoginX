@@ -28,4 +28,6 @@ Router.route('/get-comment-follow-comment-id')
 Router.route('/delete-comment')
   .post(postValidation.deleteComment, postController.deleteComment)
 
+Router.route('/search')
+  .get(postValidation.searchPost, postController.searchPost)
 export const postRouter = Router

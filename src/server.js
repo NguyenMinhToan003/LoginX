@@ -13,6 +13,7 @@ import http from 'http'
 
 import { socketConnection } from './socket/index.js'
 import { configCloudinary } from './configs/cloudinary.js'
+import { linkedInStrategy } from './middleware/passport/linkedInStrategy.js'
 
 const START_SERVER = () => {
   const app = express()
@@ -43,8 +44,10 @@ const START_SERVER = () => {
     cb(null, obj); // Khi lấy lại thông tin người dùng từ session
   });
   // Cấu hình Passport
+  linkedInStrategy()
   twitterStrategy()  // Khởi tạo chiến lược Twitter
   gitHubStrategy() // Khởi tạo chiến lược GitHub
+
   
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))

@@ -21,4 +21,7 @@ router.route('/delete-request-friend')
   .post()
 router.route('/unfriend')
   .post()
+
+router.route('/search')
+  .get(userValidation.searchUser, userController.searchUser)
 export const userRouter = router;
