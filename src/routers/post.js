@@ -3,31 +3,32 @@ import { uploadMulter } from '~/middleware/multer/multer.js';
 import { postValidation } from '../validations/postValidation.js';
 import { postController } from '../controllers/postController.js';
 
-const Router = express.Router();
+const router = express.Router();
 
-Router.route('/create')
+router.route('/create')
   .post(
     uploadMulter.array('files', 4),
     postValidation.createPost,
     postController.createPost)
 
-Router.route('/get-post-by-author-id')
+router.route('/get-post-by-author-id')
   .get(postValidation.getPostByAuthorId, postController.getPostByAuthorId)
-
-Router.route('/get-posts-friend')
+router.route('/get-posts-friend')
   .get(postValidation.getPostsFriend, postController.getPostsFriend)
-
-Router.route('/delete')
+router.route('/delete')
   .post(postValidation.deletePost, postController.deletePost)
-Router.route('/comment')
+router.route('/comment')
   .post(postValidation.commentPost, postController.commentPost)
-Router.route('/get-comments')
+router.route('/get-comments')
   .get(postValidation.getComments, postController.getComments)
-Router.route('/get-comment-follow-comment-id')
+router.route('/get-comment-follow-comment-id')
   .get(postValidation.getCommentFollowCommentId, postController.getCommentFollowCommentId)
-Router.route('/delete-comment')
+router.route('/delete-comment')
   .post(postValidation.deleteComment, postController.deleteComment)
-
-Router.route('/search')
+router.route('/interaction')
+  .post(postValidation.interactionPost, postController.interactionPost)
+router.route('/uninteraction')
+  .post(postValidation.uninteractionPost, postController.uninteractionPost)
+router.route('/search')
   .get(postValidation.searchPost, postController.searchPost)
-export const postRouter = Router
+export const postRouter = router

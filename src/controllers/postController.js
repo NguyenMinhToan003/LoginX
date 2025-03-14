@@ -9,7 +9,8 @@ const createPost = async (req, res) => {
       public_id: file.filename
     }));
     if (files.length === 0) assets = [];
-    const result = await postService.createPost({ title, content, authorId, assets });
+    const result = await postService.createPost(
+      { title, content, authorId, assets });
     return res.status(201).json(result);
   }
   catch (error) {
@@ -20,8 +21,8 @@ const createPost = async (req, res) => {
 
 const getPostByAuthorId = async (req, res) => {
   try {
-    const { authorId } = req.query
-    const result = await postService.getPostByAuthorId(authorId);
+    const { authorId, userId } = req.query
+    const result = await postService.getPostByAuthorId({ authorId, userId });
     return res.status(200).json(result);
   }
   catch (error) {
@@ -97,8 +98,30 @@ const deleteComment = async (req, res) => {
 
 const searchPost = async (req, res) => {
   try {
-    const { title, authorName } = req.query
-    const result = await postService.searchPost({ title, authorName });
+    const { title } = req.query
+    const result = await postService.searchPost({ title });
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+const interactionPost = async (req, res) => {
+  try {
+    const { postId, userId, type } = req.body;
+    const result = await postService.interactionPost({ postId, userId, type });
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+const uninteractionPost = async (req, res) => {
+  try {
+    const { postId, userId, type } = req.body;
+    const result = await postService.uninteractionPost({ postId, userId, type });
     return res.status(200).json(result)
   }
   catch (error) {
@@ -115,5 +138,7 @@ export const postController = {
   getComments,
   getCommentFollowCommentId,
   deleteComment,
-  searchPost
+  searchPost,
+  interactionPost,
+  uninteractionPost
 }

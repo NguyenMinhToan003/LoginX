@@ -1,13 +1,24 @@
 import { messageModel } from '../models/messagesModel.js'
 import { roomChatModel } from '../models/roomChatModel.js'
 
-const createMessage = async (roomId, sender, content) => {
+const createMessage = async ({roomId, sender, content,followMessageId}) => {
   try {
     const room = await roomChatModel.findRoomById(roomId)
 
     if(room) {
-      if(room?.members.includes(sender)|| room?.info?.admins.includes(sender)) {
-        const message = await messageModel.createMessage(roomId, sender, content)
+      if (room?.members.includes(sender) || room?.info?.admins.includes(sender)) {
+        
+        if (followMessageId) {
+          const followMessage = await messageModel.findMessageById(followMessageId)
+          if(followMessage?.status === 'delete' || !followMessage)
+            return { message : 'Follow message not found' }
+        }
+        else {
+          followMessageId = null
+        }
+        const message = await messageModel.createMessage(
+          {roomId, sender, content, followMessageId}
+        )
         return {
           ...message,
           message : 'create message'
@@ -60,5 +71,5 @@ const deleteMessage = async (userId, messageId) => {
 export const messageService = {
   createMessage,
   getAllMessage,
-  deleteMessage
+  deleteMessage,
 }

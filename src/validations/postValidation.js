@@ -19,6 +19,7 @@ const getPostByAuthorId = async (req, res, next) => {
   try {
     const schema = Joi.object({
       authorId: Joi.string().required(),
+      userId: Joi.string()
     })
     await schema.validateAsync(req.query, { abortEarly: false });
     next();
@@ -115,9 +116,38 @@ const searchPost = async (req, res, next) => {
   try {
     const schema = Joi.object({
       title: Joi.string(),
-      authorName: Joi.string()
     })
     await schema.validateAsync(req.query, { abortEarly: false });
+    next();
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+const interactionPost = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      postId: Joi.string().required(),
+      userId: Joi.string().required(),
+      type: Joi.string().valid('like','share').required(),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false });
+    next();
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+const uninteractionPost = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      postId: Joi.string().required(),
+      userId: Joi.string().required(),
+      type: Joi.string().valid('like','share').required(),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false });
     next();
   }
   catch (error) {
@@ -134,5 +164,7 @@ export const postValidation = {
   getComments,
   getCommentFollowCommentId,
   deleteComment,
-  searchPost
+  searchPost,
+  interactionPost,
+  uninteractionPost
 }

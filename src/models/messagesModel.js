@@ -7,24 +7,28 @@ const MESSAGE_SCHEMA = Joi.object({
   roomId: Joi.string().required(),
   sender: Joi.string().required(),
   content: Joi.string().required(),
+  followMessageId: Joi.string().default(null),
   status: Joi.string().valid('read', 'delete').default('read'),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
-const createMessage = async (roomId, sender, content) => {
+const createMessage = async({ roomId, sender, content, followMessageId=null}) => {
   try {
     let data = {
       roomId,
       sender,
-      content,
+      content
     }
     data = await MESSAGE_SCHEMA.validateAsync(data, { abortEarly: false })
+    if (followMessageId)
+      data.followMessageId = new ObjectId(followMessageId)
     return await GET_DB().collection(MESSAGE_COLLECTION).insertOne(data)
   }
   catch (error) {
     throw error
   }
 }
+
 const getAllMessage = async (roomId) => {
   try {
     return await GET_DB().collection(MESSAGE_COLLECTION).aggregate([
@@ -37,19 +41,32 @@ const getAllMessage = async (roomId) => {
           as: 'sender'
         }
       },
+      { $unwind: '$sender' },
       {
-        $unwind: '$sender'
+        $lookup: {
+          from: MESSAGE_COLLECTION,
+          localField: 'followMessageId',
+          foreignField: '_id',
+          as: 'followedMessage'
+        }
+      },
+      { 
+        $unwind: { 
+          path: '$followedMessage', 
+          preserveNullAndEmptyArrays: true 
+        } 
       },
       {
         $project: {
+          'sender._id': 1,
           'sender.name': 1,
+          'sender.picture': 1,
           content: 1,
           status: 1,
           createdAt: 1,
           updatedAt: 1,
-          'sender._id': 1,
-          'sender.name': 1,
-          'sender.picture':1
+          'followedMessage._id': 1,
+          'followedMessage.content': 1
         }
       }
     ]).toArray()
@@ -58,6 +75,7 @@ const getAllMessage = async (roomId) => {
     throw error
   }
 }
+
 
 const deleteMessage = async (messageId) => {
   try {
@@ -86,6 +104,8 @@ const findMessageById = async (messageId) => {
     throw error
   }
 }
+
+
 
 export const messageModel = {
   MESSAGE_COLLECTION,

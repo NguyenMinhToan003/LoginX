@@ -11,5 +11,6 @@ router.route('/delete')
   .post(messageValidation.deleteMessage, messageController.deleteMessage)
 router.route('/get-message-in-room')
   .post(messageValidation.getAllMessage,messageController.getAllMessage)
-
+router.route('/rep-message')
+  .post(messageValidation.repMessage,messageController.repMessage)
 export const messageRouter = router;

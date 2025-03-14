@@ -2,8 +2,10 @@ import { messageService } from "../services/messageService.js"
 
 const createMessage = async (req, res) => {
   try {
-    const { roomId, sender, content } = req.body
-    const result = await messageService.createMessage(roomId, sender, content)
+    const { roomId, sender, content,followMessageId } = req.body
+    const result = await messageService.createMessage(
+      {roomId, sender, content, followMessageId}
+    )
     return res.status(200).json(result)
   }
   catch (error) {
@@ -33,8 +35,22 @@ const deleteMessage = async (req, res) => {
   }
 }
 
+const repMessage = async (req, res) => {
+  try {
+    const { messageId, authorId, content, followMessageId } = req.body
+    const result = await messageService.repMessage(
+      {messageId, authorId, content, followMessageId}
+    )
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const messageController = {
   createMessage,
   getAllMessage,
-  deleteMessage
+  deleteMessage,
+  repMessage
 }

@@ -2,6 +2,8 @@ import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from '~/configs/cl
 import { userModel } from '~/models/userModel';
 import { postModel } from '~/models/postModel';
 import { postCommentModel } from '~/models/post_commentModel';
+import { postInteractionModel } from '~/models/post_interactionsModel';
+import { ObjectId } from 'mongodb';
 
 const createPost = async ({ title, content, authorId, assets }) => {
   try {
@@ -27,9 +29,18 @@ const createPost = async ({ title, content, authorId, assets }) => {
   }
 }
 
-const getPostByAuthorId = async (authorId) => {
+const getPostByAuthorId = async ({authorId, userId}) => {
   try {
-    const result = await postModel.findPostsByAuthorId({authorId})
+    const result = await postModel.findPostsByAuthorId({ authorId })
+    // add interaction
+    for (let i = 0; i < result.length; i++) {
+      const post = result[i]
+      const interactions = await postInteractionModel.getInteractionByPostId(
+        {postId: post._id, userId}
+      )
+      result[i].interactions = interactions
+    }
+    
     return result
   }
   catch (error) {
@@ -42,8 +53,18 @@ const getPostsFriend = async (userId) => {
     const user = await userModel.findUserById(userId)
     if (!user) return { message: 'User not found' }
     const friends = user.friends
-    const result = await postModel.findPostsByAuthorId(
+    let result = await postModel.findPostsByAuthorId(
       { authorId: { $in: friends } })
+    
+    // add interaction 
+    for (let i = 0; i < result.length; i++) {
+      const post = result[i]
+      const interactions = await postInteractionModel.getInteractionByPostId(
+        {postId: post._id, userId}
+      )
+      result[i].interactions = interactions
+
+    }
     return result
   }
   catch (error) {
@@ -137,9 +158,57 @@ const deleteComment = async (commentId, authorId) => {
   }
 }
 
-const searchPost = async ({ title, authorName }) => {
+const searchPost = async ({ title }) => {
   try {
-    const result = await postModel.findPostByQuery({ title, authorName })
+    const result = await postModel.findPostByQuery({ title })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const interactionPost = async ({ postId, userId, type }) => {
+  try {
+    const post = await postModel.findPostById(postId)
+    if (!post) return { message: 'Post not found' }
+    const user = await userModel.findUserById(userId)
+    if (!user) return { message: 'User not found' }
+    const findInteraction = await postInteractionModel.findInteractionByQuery({
+      postId: new ObjectId(postId),
+      userId,
+      type
+    })
+    if (findInteraction.length > 0) return { message: 'Interaction already exists' }
+    const result = postInteractionModel.createPostInteraction({
+      postId,
+      userId,
+      type
+    })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const uninteractionPost = async ({ postId, userId, type }) => {
+  try {
+    const post = await postModel.findPostById(postId)
+    if (!post) return { message: 'Post not found' }
+    const user = await userModel.findUserById(userId)
+    if (!user) return { message: 'User not found' }
+    const findInteraction = await postInteractionModel.findInteractionByQuery({
+      postId: new ObjectId(postId),
+      userId,
+      type
+    })
+    if (findInteraction.length === 0) return { message: 'Interaction not found' }
+    const result = postInteractionModel.deletePostInteraction({
+      postId,
+      userId,
+      type
+    })
     return result
   }
   catch (error) {
@@ -156,5 +225,7 @@ export const postService = {
   getComments,
   getCommentFollowCommentId,
   deleteComment,
-  searchPost
+  searchPost,
+  interactionPost,
+  uninteractionPost
 }

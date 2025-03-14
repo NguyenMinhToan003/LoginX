@@ -78,17 +78,10 @@ const deletePost = async (postId) => {
   }
 }
 
-const findPostByQuery = async ({ title, authorName }) => {
+const findPostByQuery = async ({ title }) => {
   try {
     const posts = await GET_DB().collection(POST_COLLECTION).aggregate([
-      {
-        $match: {
-          $or: [
-            { title: { $regex: title, $options: 'i' } },
-            { content: { $regex: title, $options: 'i' } }
-          ]
-        }
-      },
+      { $match: { title: { $regex: title, $options: 'i' } } },
       {
         $lookup: {
           from: 'users',
@@ -98,9 +91,6 @@ const findPostByQuery = async ({ title, authorName }) => {
         }
       },
       { $unwind: '$author' },
-      {
-        $match: { 'author.name': { $regex: authorName, $options: 'i' } }
-      },
       {
         $project: {
           title: 1,

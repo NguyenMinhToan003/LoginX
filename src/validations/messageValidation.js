@@ -6,6 +6,7 @@ const createMessage = async (req, res, next) => {
       roomId: Joi.string().required(),
       sender: Joi.string().required(),
       content: Joi.string().required(),
+      followMessageId: Joi.string(),
     })
     await schema.validateAsync(req.body, { abortEarly: false })
     next()
@@ -42,8 +43,25 @@ const deleteMessage = async (req, res, next) => {
   }
 }
 
+const repMessage = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      messageId: Joi.string().required(),
+      authorId: Joi.string().required(),
+      content: Joi.string().required(),
+      followMessageId: Joi.string().required(),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const messageValidation = {
   createMessage,
   getAllMessage,
-  deleteMessage
+  deleteMessage,
+  repMessage
 }
