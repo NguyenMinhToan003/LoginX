@@ -53,7 +53,21 @@ const respondFriendRequest = async (friendRequestId, status, userAction) => {
   }
 }
 
+const searchUser = async (name) => {
+  try {
+    const users = await userModel.findUserByQuery({
+      name: { $regex: name, $options: 'i' }
+        // tim kiem theo ten voi regex va i la khong phan biet hoa thuong
+    })
+    return users
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   addFriendRequest,
-  respondFriendRequest
+  respondFriendRequest,
+  searchUser
 }

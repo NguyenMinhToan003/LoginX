@@ -137,6 +137,16 @@ const deleteComment = async (commentId, authorId) => {
   }
 }
 
+const searchPost = async ({ title, authorName }) => {
+  try {
+    const result = await postModel.findPostByQuery({ title, authorName })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const postService = {
   createPost,
   getPostByAuthorId,
@@ -145,5 +155,6 @@ export const postService = {
   commentPost,
   getComments,
   getCommentFollowCommentId,
-  deleteComment
+  deleteComment,
+  searchPost
 }

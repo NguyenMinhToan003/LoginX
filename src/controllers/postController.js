@@ -95,6 +95,17 @@ const deleteComment = async (req, res) => {
   }
 }
 
+const searchPost = async (req, res) => {
+  try {
+    const { title, authorName } = req.query
+    const result = await postService.searchPost({ title, authorName });
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
 export const postController = {
   createPost,
   getPostByAuthorId,
@@ -103,5 +114,6 @@ export const postController = {
   commentPost,
   getComments,
   getCommentFollowCommentId,
-  deleteComment
+  deleteComment,
+  searchPost
 }

@@ -49,11 +49,22 @@ const respondFriendRequest = async (req, res) => {
     return res.status(400).json({ message: error.message })
   }
 }
+const searchUser = async (req, res) => {
+  try {
+    const { name } = req.query
+    const users = await userService.searchUser(name)
+    return res.status(200).json(users)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
 
 export const userController = {
   getDatUser,
   getAllUser,
   addFriendRequest,
   respondFriendRequest,
+  searchUser
   
 }
