@@ -13,12 +13,14 @@ import http from 'http'
 
 import { socketConnection } from './socket/index.js'
 import { configCloudinary } from './configs/cloudinary.js'
+import { corsOptionsDelegate } from './configs/cors.js'
 
 const START_SERVER = () => {
   const app = express()
+  // cau hinh CORS cho server
   app.use(cors(
     {
-      origin: process.env.FRONTEND_ENDPOINT,
+      origin: corsOptionsDelegate,
       methods: "GET,POST,PUT,DELETE",
       credentials: true
     }
