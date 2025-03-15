@@ -1,4 +1,4 @@
-import Joi from "joi"
+import Joi, { link } from "joi"
 import { GET_DB } from "../configs/db.js"
 
 const USER_COLLECTION = 'users'
@@ -7,14 +7,16 @@ export const userSchema = Joi.object({
   name: Joi.string().required(),
   picture: Joi.string().required(),
   typeAccount: Joi.string().required().valid('local', 'twitter','github'),
-  password: Joi.string().when('typeAccount', {
-    is: 'local',
-    then: Joi.string().required()
-  }).when('typeAccount', {
-    is: Joi.string().valid('twitter', 'github'),
-    then: Joi.string().optional().allow(null)
-  }),
-
+  password: Joi.string().default(null),
+  email: Joi.string().email().default(null),
+  phone: Joi.string().default(null),
+  address: Joi.string().default(null),
+  userName: Joi.string().default(null),
+  background: Joi.string().default(null),
+  link: Joi.array().items(Joi.string()).default([]),
+  bio: Joi.string().default(null),
+  history: Joi.string().default(null),
+  timeLogin: Joi.date().timestamp().default(Date.now()),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
