@@ -1,5 +1,6 @@
 
 import { friendRequestModel } from "~/models/friend_requestsModel"
+import { friendModel } from "~/models/friendModel"
 import { userModel } from "~/models/userModel"
 
 const addFriendRequest = async (userId, friendId) => {
@@ -36,9 +37,9 @@ const respondFriendRequest = async (friendRequestId, status, userAction) => {
     if (friendRequest?.receiverId !== userAction)
       return { message: "You are not receiver of this friend request" }
     const updateReq = await friendRequestModel.respondFriendRequest(friendRequestId, status)
-    if(updateReq && status === "accepted") {
-      await userModel.addFriend(friendRequest?.senderId, friendRequest?.receiverId)
-      await userModel.addFriend(friendRequest?.receiverId, friendRequest?.senderId)
+    if (status === "accepted") {
+      await friendModel.addFriend(friendRequest.senderId, friendRequest.receiverId)
+      await friendModel.addFriend(friendRequest.receiverId, friendRequest.senderId)
     }
     return {
       ...updateReq,
@@ -81,8 +82,7 @@ const deleteFriendRequest = async (friendRequestId, userAction) => {
       return { message: 'friendRequest is not found' }
     if (friendRequest?.senderId !== userAction)
       return { message: 'not Auth' }
-    // if(friendRequest?.status !== "pending")
-    //   return { message: 'friendRequest already responded' }
+
     const result = await friendRequestModel.deleteFriendRequest(friendRequestId)
     
     return {
@@ -102,11 +102,21 @@ const unfriend = async (userId, friendId) => {
     if (!user || !friend) {
       throw new Error('User not found')
     }
-    if (!user?.friends?.includes(friendId))
-      return { message: "You are not friend" }
-    const result = await userModel.unfriend(userId, friendId)
-
+    const result = await friendModel.unfriend(userId, friendId)
+    await friendModel.unfriend(friendId, userId)
     return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const getFriends = async (userId) => {
+  try {
+    const user = await userModel.findUserById(userId)
+    if (!user) return { message: 'User not found' }
+    const friends = await friendModel.findFriendsByUserId(userId)
+    return friends
   }
   catch (error) {
     throw error
@@ -119,5 +129,6 @@ export const userService = {
   searchUser,
   getFriendRequest,
   deleteFriendRequest,
-  unfriend
+  unfriend,
+  getFriends
 }

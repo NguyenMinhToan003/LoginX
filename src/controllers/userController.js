@@ -93,6 +93,17 @@ const unfriend = async (req, res) => {
   }
 }
 
+const getFriends = async (req, res) => {
+  try {
+    const { userId } = req.query
+    const result = await userService.getFriends(userId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const userController = {
   getDatUser,
   getAllUser,
@@ -101,5 +112,6 @@ export const userController = {
   searchUser,
   getFriendRequest,
   deleteFriendRequest,
-  unfriend
+  unfriend,
+  getFriends
 }

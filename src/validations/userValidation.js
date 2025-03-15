@@ -82,6 +82,18 @@ const unfriend = async (req, res, next) => {
     return res.status(400).json({ message: error.message })
   }
 }
+const getFriends = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      userId: Joi.string().required()
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next() 
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
 
 export const userValidation = {
   addFriendRequest,
@@ -89,5 +101,6 @@ export const userValidation = {
   searchUser,
   getFriendRequest,
   deleteFriendRequest,
-  unfriend
+  unfriend,
+  getFriends
 }

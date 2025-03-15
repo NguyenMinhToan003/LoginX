@@ -4,6 +4,7 @@ import { postModel } from '~/models/postModel';
 import { postCommentModel } from '~/models/post_commentModel';
 import { postInteractionModel } from '~/models/post_interactionsModel';
 import { ObjectId } from 'mongodb';
+import { friendModel } from '~/models/friendModel';
 
 const createPost = async ({ title, content, authorId, assets }) => {
   try {
@@ -54,9 +55,10 @@ const getPostsFriend = async (userId) => {
   try {
     const user = await userModel.findUserById(userId)
     if (!user) return { message: 'User not found' }
-    const friends = user.friends
+    const friends =await friendModel.findFriendsByUserId(userId)
+    const friendsId = friends.map(friend => friend._id)
     let result = await postModel.findPostsByAuthorId(
-      { authorId: { $in: friends } })
+      { authorId: { $in: friendsId } })
     
     // add interaction 
     for (let i = 0; i < result.length; i++) {
