@@ -60,11 +60,46 @@ const searchUser = async (req, res) => {
   }
 }
 
+const getFriendRequest = async (req, res) => {
+  try {
+    const { userId } = req.query
+    const result = await userService.getFriendRequest(userId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const deleteFriendRequest = async (req, res) => {
+  try {
+    const { friendRequestId, userAction } = req.body
+    const result = await userService.deleteFriendRequest(friendRequestId, userAction)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const unfriend = async (req, res) => {
+  try {
+    const { userId, friendId } = req.body
+    const result = await userService.unfriend(userId, friendId)
+    return res.status(200).json(result) 
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const userController = {
   getDatUser,
   getAllUser,
   addFriendRequest,
   respondFriendRequest,
-  searchUser
-  
+  searchUser,
+  getFriendRequest,
+  deleteFriendRequest,
+  unfriend
 }

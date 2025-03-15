@@ -75,11 +75,29 @@ const findUserByQuery = async (query) => {
   }
 }
 
+const unfriend = async (userId, friendId) => {
+  try {
+    const result = await GET_DB().collection(USER_COLLECTION).updateOne(
+      { _id: userId },
+      { $pull: { friends: friendId } }
+    )
+    const updateFriend = await GET_DB().collection(USER_COLLECTION).updateOne(
+      { _id: friendId },
+      { $pull: { friends: userId } }
+    )
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const userModel = {
   USER_COLLECTION,
   findUserById,
   createUser,
   findAllUser,
   addFriend,
-  findUserByQuery
+  findUserByQuery,
+  unfriend
 }

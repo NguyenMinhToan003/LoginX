@@ -6,13 +6,13 @@ import { roomChatController } from '../controllers/roomChatController.js';
 
 const router = express.Router();
 
-
+// tao moi phong chat
 router.route('/create')
   .post(roomChatValidation.createRoom, roomChatController.createRoom)
-
+// tham gia phong chat
 router.route('/join')
   .post(roomChatValidation.joinRoom, roomChatController.joinRoom)
-
+// lay thong tin phogn chat 
 router.route('/get-room-info')
   .get(roomChatValidation.getRoom, roomChatController.getRoom)
 // lay thong tin phong chat so huu

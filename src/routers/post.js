@@ -11,6 +11,8 @@ router.route('/create')
     postValidation.createPost,
     postController.createPost)
 
+router.route('/get-post-by-id')
+  .get(postValidation.getPostById, postController.getPostById)
 router.route('/get-post-by-author-id')
   .get(postValidation.getPostByAuthorId, postController.getPostByAuthorId)
 router.route('/get-posts-friend')

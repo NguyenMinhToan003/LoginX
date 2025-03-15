@@ -14,10 +14,7 @@ const addFriendRequest = async (userId, friendId) => {
     
     if (userId === friendId)
       return { message: "You can't send friend request to yourself" }
-    const findReqBy2User =
-      await friendRequestModel.findFriendRequestBy2User(userId, friendId)
-    if (findReqBy2User)
-      return { message: "Friend request already sent" }
+
     const result = await friendRequestModel.addFriendRequest(userId, friendId)
     return {
       ...result,
@@ -66,8 +63,61 @@ const searchUser = async (name) => {
   }
 }
 
+const getFriendRequest = async (userId) => {
+  try {
+    const friendRequests =
+      await friendRequestModel.findFriendRequestByReceiverIdAndSender(userId)
+    return friendRequests
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const deleteFriendRequest = async (friendRequestId, userAction) => {
+  try {
+    const friendRequest = await friendRequestModel.findFriendRequestById(friendRequestId)
+    if (!friendRequest)
+      return { message: 'friendRequest is not found' }
+    if (friendRequest?.senderId !== userAction)
+      return { message: 'not Auth' }
+    // if(friendRequest?.status !== "pending")
+    //   return { message: 'friendRequest already responded' }
+    const result = await friendRequestModel.deleteFriendRequest(friendRequestId)
+    
+    return {
+      ...result,
+      message: "Delete friend request success"
+    }
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const unfriend = async (userId, friendId) => {
+  try {
+    const user = await userModel.findUserById(userId)
+    const friend = await userModel.findUserById(friendId)
+    if (!user || !friend) {
+      throw new Error('User not found')
+    }
+    if (!user?.friends?.includes(friendId))
+      return { message: "You are not friend" }
+    const result = await userModel.unfriend(userId, friendId)
+
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   addFriendRequest,
   respondFriendRequest,
-  searchUser
+  searchUser,
+  getFriendRequest,
+  deleteFriendRequest,
+  unfriend
 }

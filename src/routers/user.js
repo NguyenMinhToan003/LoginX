@@ -11,17 +11,14 @@ router.route('/all')
   .get(userController.getAllUser)
 router.route('/request-friend')
   .post(userValidation.addFriendRequest, userController.addFriendRequest)
-
 router.route('/respond-friend-request')
   .post(userValidation.respondFriendRequest, userController.respondFriendRequest)
-
 router.route('/get-friend-request')
-  .get()
+  .get(userValidation.getFriendRequest, userController.getFriendRequest)
 router.route('/delete-request-friend')
-  .post()
+  .post(userValidation.deleteFriendRequest, userController.deleteFriendRequest)
 router.route('/unfriend')
-  .post()
-
+  .post(userValidation.unfriend, userController.unfriend)
 router.route('/search')
   .get(userValidation.searchUser, userController.searchUser)
 export const userRouter = router;

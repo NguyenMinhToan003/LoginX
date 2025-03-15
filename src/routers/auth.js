@@ -24,9 +24,6 @@ router.route('/github/callback')
     authController.loginWithGithub
   )
 
-
-
-
  // su ly sau khi lay duoc token dawng nhap 
 router.route('/decode-token-login')
   .get(authController.decodeTokenLogin)

@@ -38,9 +38,11 @@ const getPostByAuthorId = async ({authorId, userId}) => {
       const interactions = await postInteractionModel.getInteractionByPostId(
         {postId: post._id, userId}
       )
+      const comments = await postCommentModel.findCommentsByPostId(post._id)
+      result[i].coundComment = comments.length
       result[i].interactions = interactions
     }
-    
+
     return result
   }
   catch (error) {
@@ -62,6 +64,8 @@ const getPostsFriend = async (userId) => {
       const interactions = await postInteractionModel.getInteractionByPostId(
         {postId: post._id, userId}
       )
+      const comments = await postCommentModel.findCommentsByPostId(post._id)
+      result[i].coundComment = comments.length
       result[i].interactions = interactions
 
     }
@@ -215,7 +219,23 @@ const uninteractionPost = async ({ postId, userId, type }) => {
     throw error
   }
 }
-
+const getPostById = async ({ postId, userId }) => {
+  try {
+    const post = await postModel.findPostById(postId)
+    if (!post) return { message: 'Post not found' }
+    const result = post
+    const interactions = await postInteractionModel.getInteractionByPostId(
+      {postId: post._id, userId}
+    )
+    result.interactions = interactions
+    const comments = await postCommentModel.findCommentsByPostId(postId)
+    result.comments = comments
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const postService = {
   createPost,
   getPostByAuthorId,
@@ -227,5 +247,6 @@ export const postService = {
   deleteComment,
   searchPost,
   interactionPost,
-  uninteractionPost
+  uninteractionPost,
+  getPostById
 }

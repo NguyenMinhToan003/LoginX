@@ -1,12 +1,12 @@
-import Joi from "joi";
-import { ObjectId } from "mongodb";
-import { GET_DB } from "~/configs/db";
+import Joi from 'joi';
+import { ObjectId } from 'mongodb';
+import { GET_DB } from '~/configs/db';
 
 const POSTINTERACTION_COLLECTION = 'post_interactions';
 const POSTINTERACTION_SCHEMA = Joi.object({
   postId: Joi.string().required(),
   userId: Joi.string().required(),
-  type: Joi.string().valid('like', 'share').required(),
+  type: Joi.string().valid('like', 'haha','heart').required(),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
@@ -50,35 +50,45 @@ const getInteractionByPostId = async ({postId, userId=null}) => {
       { $match: { postId: new ObjectId(postId) } },
       {
          $group: {
-          _id: "$postId",
+          _id: '$postId',
           likes: {
-            $sum: { $cond: [{ $eq: ["$type", "like"] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$type', 'like'] }, 1, 0] }
           },
-          shares: {
-            $sum: { $cond: [{ $eq: ["$type", "share"] }, 1, 0] }
+          hahas: {
+            $sum: { $cond: [{ $eq: ['$type', 'haha'] }, 1, 0] }
+          },
+          hearts: {
+            $sum: { $cond: [{ $eq: ['$type', 'heart'] }, 1, 0] }
           },
           likeUsers: {
-            $push: { $cond: [{ $eq: ["$type", "like"] }, "$userId", ''] }
+            $push: { $cond: [{ $eq: ['$type', 'like'] }, '$userId', ''] }
           },
-          shareUsers: {
-            $push: { $cond: [{ $eq: ["$type", "share"] }, "$userId", ''] }
-          }
+          hahaUsers: {
+            $push: { $cond: [{ $eq: ['$type', 'haha'] }, '$userId', ''] }
+          },
+          heartUsers: {
+            $push: { $cond: [{ $eq: ['$type', 'heart'] }, '$userId', ''] }
+          },
+         
         },
       },
       {
         $addFields: {
-          isLiked: { $in: [userId, "$likeUsers"] },
-          isShared: { $in: [userId, "$shareUsers"] }
+          isLiked: { $in: [userId, '$likeUsers'] },
+          isHaha: { $in: [userId, '$hahaUsers'] },
+          isHeart: { $in: [userId, '$heartUsers'] },
         }
       },
       {
         $project: {
           _id: 0,
-          postId: "$_id",
+          postId: '$_id',
           likes: 1,
-          shares: 1,
+          hahas: 1,
+          hearts: 1,
           isLiked: 1,
-          isShared: 1
+          isHaha: 1,
+          isHeart: 1,
         }
       }
     ]).toArray()

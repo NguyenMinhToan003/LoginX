@@ -130,7 +130,7 @@ const interactionPost = async (req, res, next) => {
     const schema = Joi.object({
       postId: Joi.string().required(),
       userId: Joi.string().required(),
-      type: Joi.string().valid('like','share').required(),
+      type: Joi.string().valid('like', 'haha','heart').required(),
     })
     await schema.validateAsync(req.body, { abortEarly: false });
     next();
@@ -145,7 +145,7 @@ const uninteractionPost = async (req, res, next) => {
     const schema = Joi.object({
       postId: Joi.string().required(),
       userId: Joi.string().required(),
-      type: Joi.string().valid('like','share').required(),
+      type: Joi.string().valid('like', 'haha','heart').required(),
     })
     await schema.validateAsync(req.body, { abortEarly: false });
     next();
@@ -155,6 +155,20 @@ const uninteractionPost = async (req, res, next) => {
   }
 }
 
+const getPostById = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      postId: Joi.string().required(),
+      userId: Joi.string()
+    })
+    await schema.validateAsync(req.query, { abortEarly: false });
+    next();
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+
+}
 export const postValidation = {
   createPost,
   getPostByAuthorId,
@@ -166,5 +180,6 @@ export const postValidation = {
   deleteComment,
   searchPost,
   interactionPost,
-  uninteractionPost
+  uninteractionPost,
+  getPostById
 }

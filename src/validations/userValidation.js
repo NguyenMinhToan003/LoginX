@@ -42,8 +42,52 @@ const searchUser = async (req, res, next) => {
   }
 }
 
+const getFriendRequest = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      userId: Joi.string().required()
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const deleteFriendRequest = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      friendRequestId: Joi.string().required(),
+      userAction: Joi.string().required()
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const unfriend = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      userId: Joi.string().required(),
+      friendId: Joi.string().required()
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const userValidation = {
   addFriendRequest,
   respondFriendRequest,
-  searchUser
+  searchUser,
+  getFriendRequest,
+  deleteFriendRequest,
+  unfriend
 }

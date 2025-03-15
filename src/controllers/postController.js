@@ -129,6 +129,17 @@ const uninteractionPost = async (req, res) => {
   }
 }
 
+const getPostById = async (req, res) => {
+  try {
+    const { postId, userId } = req.query
+    const result = await postService.getPostById({ postId, userId });
+    return res.status(200).json(result);
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
 export const postController = {
   createPost,
   getPostByAuthorId,
@@ -140,5 +151,6 @@ export const postController = {
   deleteComment,
   searchPost,
   interactionPost,
-  uninteractionPost
+  uninteractionPost,
+  getPostById
 }
