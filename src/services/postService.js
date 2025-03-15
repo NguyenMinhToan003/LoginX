@@ -166,7 +166,16 @@ const deleteComment = async (commentId, authorId) => {
 
 const searchPost = async ({ title }) => {
   try {
-    const result = await postModel.findPostByQuery({ title })
+    const result = await postModel.findPostByQuery({ title }) 
+    for(let i = 0; i < result.length; i++) {
+      const post = result[i]
+      const interactions = await postInteractionModel.getInteractionByPostId(
+        {postId: post._id, userId: post.authorId}
+      )
+      const comments = await postCommentModel.findCommentsByPostId(post._id)
+      result[i].coundComment = comments.length
+      result[i].interactions = interactions
+    }
     return result
   }
   catch (error) {
