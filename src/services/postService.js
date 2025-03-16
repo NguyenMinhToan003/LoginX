@@ -191,15 +191,24 @@ const interactionPost = async ({ postId, userId, type }) => {
     if (!user) return { message: 'User not found' }
     const findInteraction = await postInteractionModel.findInteractionByQuery({
       postId: new ObjectId(postId),
-      userId,
-      type
+      userId
     })
-    if (findInteraction.length > 0) return { message: 'Interaction already exists' }
-    const result = postInteractionModel.createPostInteraction({
-      postId,
-      userId,
-      type
-    })
+    console.log('findInteraction',findInteraction)
+    let result = {}
+    if (findInteraction.length === 0 ){
+      result = postInteractionModel.createPostInteraction({
+        postId,
+        userId,
+        type
+      })
+    }
+    else {
+      result = postInteractionModel.updatePostInteraction({
+        _id: findInteraction[0]._id,
+        type
+      })
+    }
+
     return result
   }
   catch (error) {

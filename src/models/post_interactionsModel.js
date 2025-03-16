@@ -22,6 +22,24 @@ const createPostInteraction = async ({ postId, userId, type }) => {
     throw error
   }
 }
+const updatePostInteraction = async ({_id,type}) => {
+  try {
+
+    return await GET_DB().collection(POSTINTERACTION_COLLECTION).updateOne(
+      { _id: new ObjectId(_id) },
+      {
+        $set: {
+          type: type,
+          updatedAt: Date.now()
+        }
+      }
+    )
+    
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 const deletePostInteraction = async ({ postId, userId, type }) => {
   try {
@@ -104,5 +122,6 @@ export const postInteractionModel = {
   findInteractionByQuery,
   createPostInteraction,
   deletePostInteraction,
-  getInteractionByPostId
+  getInteractionByPostId,
+  updatePostInteraction
 }

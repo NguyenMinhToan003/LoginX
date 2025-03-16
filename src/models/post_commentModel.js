@@ -1,5 +1,6 @@
 import Joi from "joi"
 import { GET_DB } from "~/configs/db"
+import { userModel } from "./userModel"
 
 const { ObjectId } = require("mongodb")
 
@@ -32,7 +33,7 @@ const createComment = async ({postId, authorId, content, followCommentId}) => {
 const findCommentsByPostId = async (postId) => {
   try {
     const result = await GET_DB().collection(POSTCOMMENT_COLLECTION).aggregate([
-      { $match: { postId: new ObjectId(postId) } },
+      { $match: { postId: new ObjectId(postId), followCommentId: null } }, // Lấy comment gốc
       {
         $lookup: {
           from: 'users',
@@ -43,13 +44,22 @@ const findCommentsByPostId = async (postId) => {
       },
       { $unwind: '$author' },
       {
+        $lookup: {
+          from: POSTCOMMENT_COLLECTION,
+          localField: '_id',
+          foreignField: 'followCommentId',
+          as: 'replies'
+        }
+      },
+      {
         $project: {
           content: 1,
           'author._id': 1,
           'author.name': 1,
           'author.picture': 1,
           createdAt: 1,
-          updatedAt: 1
+          updatedAt: 1,
+          replyCount: { $size: '$replies' } // Đếm số lượng comment con
         }
       }
     ]).toArray()
@@ -59,6 +69,7 @@ const findCommentsByPostId = async (postId) => {
     throw error
   }
 }
+
 
 const findCommentFollowCommentId = async (followCommentId) => {
   try {
