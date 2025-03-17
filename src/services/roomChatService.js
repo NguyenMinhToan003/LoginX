@@ -67,11 +67,20 @@ const deleteRoom = async (roomId, userId) => {
 const leaveRoom = async (roomId, userId) => {
   try {
     const room = await roomChatModel.findRoomById(roomId)
-    if (!room) return { message: "Room not found" }
+    if (!room) return {
+      message: "Room not found",
+      code: -1
+    }
+    if (room?.info?.admins.length == 1 && room?.info?.admins[0] === userId)
+      return {
+        message: "You are admin, can't leave room",
+        code: -1
+      }
     const result = await roomChatModel.leaveRoom(roomId, userId)
     return {
       ...result,
-      message: "Leave room success"
+      code: 0,
+      message: "action leave room"
     }
   }
   catch (error){
