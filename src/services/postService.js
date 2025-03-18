@@ -36,9 +36,16 @@ const getPostByAuthorId = async ({authorId, userId}) => {
     // add interaction
     for (let i = 0; i < result.length; i++) {
       const post = result[i]
-      const interactions = await postInteractionModel.getInteractionByPostId(
+      let interactions = await postInteractionModel.getInteractionByPostId(
         {postId: post._id, userId}
       )
+      const getInteractedByUserSearch = await postInteractionModel.findInteractionByQuery(
+        {postId: post._id, userId}
+      ) || null
+      if (interactions) {
+        delete interactions.postId
+        interactions.userAction= getInteractedByUserSearch[0]?.type || null
+      }
       const comments = await postCommentModel.findCommentsByPostId(post._id)
       result[i].coundComment = comments.length
       result[i].interactions = interactions
@@ -66,6 +73,13 @@ const getPostsFriend = async (userId) => {
       const interactions = await postInteractionModel.getInteractionByPostId(
         {postId: post._id, userId}
       )
+      const getInteractedByUserSearch = await postInteractionModel.findInteractionByQuery(
+        {postId: post._id, userId}
+      ) || null
+      if (interactions) {
+        delete interactions.postId
+        interactions.userAction= getInteractedByUserSearch[0]?.type || null
+      }
       const comments = await postCommentModel.findCommentsByPostId(post._id)
       result[i].coundComment = comments.length
       result[i].interactions = interactions

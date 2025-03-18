@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.route('/')
   .post(userController.getDatUser)
+router.route('/get-user-by-id')
+  .get(userValidation.getUserById, userController.getUserById)
 router.route('/all')
   .get(userController.getAllUser)
 router.route('/request-friend')

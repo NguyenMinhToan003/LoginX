@@ -104,6 +104,17 @@ const getFriends = async (req, res) => {
   }
 }
 
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.query
+    const user = await userService.getUserById(userId)
+    return res.status(200).json(user)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const userController = {
   getDatUser,
   getAllUser,
@@ -113,5 +124,6 @@ export const userController = {
   getFriendRequest,
   deleteFriendRequest,
   unfriend,
-  getFriends
+  getFriends,
+  getUserById
 }

@@ -130,7 +130,7 @@ const interactionPost = async (req, res, next) => {
     const schema = Joi.object({
       postId: Joi.string().required(),
       userId: Joi.string().required(),
-      type: Joi.string().valid('like', 'haha','heart').required(),
+      type: Joi.string().valid('like', 'haha','heart','wow','sad', 'angry').required(),
     })
     await schema.validateAsync(req.body, { abortEarly: false });
     next();

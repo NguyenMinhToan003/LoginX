@@ -6,7 +6,7 @@ const POSTINTERACTION_COLLECTION = 'post_interactions';
 const POSTINTERACTION_SCHEMA = Joi.object({
   postId: Joi.string().required(),
   userId: Joi.string().required(),
-  type: Joi.string().valid('like', 'haha','heart').required(),
+  type: Joi.string().valid('like', 'haha','heart','wow','sad', 'angry').required(),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
@@ -62,7 +62,7 @@ const findInteractionByQuery = async (query) => {
 }
 
 ////! them truong usser de danh dau neu user da like hoac share bai viet
-const getInteractionByPostId = async ({postId, userId=null}) => {
+const getInteractionByPostId = async ({postId}) => {
   try {
     const result = await GET_DB().collection(POSTINTERACTION_COLLECTION).aggregate([
       { $match: { postId: new ObjectId(postId) } },
@@ -78,35 +78,26 @@ const getInteractionByPostId = async ({postId, userId=null}) => {
           hearts: {
             $sum: { $cond: [{ $eq: ['$type', 'heart'] }, 1, 0] }
           },
-          likeUsers: {
-            $push: { $cond: [{ $eq: ['$type', 'like'] }, '$userId', ''] }
+          wows: {
+            $sum: { $cond: [{ $eq: ['$type', 'wow'] }, 1, 0] }
           },
-          hahaUsers: {
-            $push: { $cond: [{ $eq: ['$type', 'haha'] }, '$userId', ''] }
+          sads: {
+            $sum: { $cond: [{ $eq: ['$type', 'sad'] }, 1, 0] }
           },
-          heartUsers: {
-            $push: { $cond: [{ $eq: ['$type', 'heart'] }, '$userId', ''] }
+          angrys: {
+            $sum: { $cond: [{ $eq: ['$type', 'angry'] }, 1, 0] }
           },
-         
         },
-      },
-      {
-        $addFields: {
-          isLiked: { $in: [userId, '$likeUsers'] },
-          isHaha: { $in: [userId, '$hahaUsers'] },
-          isHeart: { $in: [userId, '$heartUsers'] },
-        }
       },
       {
         $project: {
           _id: 0,
-          postId: '$_id',
           likes: 1,
           hahas: 1,
           hearts: 1,
-          isLiked: 1,
-          isHaha: 1,
-          isHeart: 1,
+          wows: 1,
+          sads: 1,
+          angrys: 1,
         }
       }
     ]).toArray()
@@ -123,5 +114,5 @@ export const postInteractionModel = {
   createPostInteraction,
   deletePostInteraction,
   getInteractionByPostId,
-  updatePostInteraction
+  updatePostInteraction,
 }

@@ -123,6 +123,16 @@ const getFriends = async (userId) => {
   }
 }
 
+const getUserById = async (userId) => {
+  try {
+    const user = await userModel.findUserByQuery({ _id: userId })
+    return user[0]
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   addFriendRequest,
   respondFriendRequest,
@@ -130,5 +140,6 @@ export const userService = {
   getFriendRequest,
   deleteFriendRequest,
   unfriend,
-  getFriends
+  getFriends,
+  getUserById
 }
