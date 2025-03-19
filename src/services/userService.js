@@ -133,6 +133,19 @@ const getUserById = async (userId) => {
   }
 }
 
+const editUser = async (userId, data) => {
+  try {
+    const user = await userModel.findUserById(userId)
+    if (!user) return { message: 'User not found' }
+    data.updatedAt = Date.now()
+    const result = await userModel.editUser(userId, data)
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   addFriendRequest,
   respondFriendRequest,
@@ -141,5 +154,6 @@ export const userService = {
   deleteFriendRequest,
   unfriend,
   getFriends,
-  getUserById
+  getUserById,
+  editUser
 }

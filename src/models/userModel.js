@@ -61,12 +61,22 @@ const findUserByQuery = async (query) => {
     throw error
   }
 }
-
+const editUser = async (id, data) => {
+  try {
+    const result = await GET_DB().collection(USER_COLLECTION).updateOne({ _id: id },
+      { $set: data })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const userModel = {
   USER_COLLECTION,
   findUserById,
   createUser,
   findAllUser,
-  findUserByQuery
+  findUserByQuery,
+  editUser
 }

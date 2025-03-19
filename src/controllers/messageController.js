@@ -2,9 +2,19 @@ import { messageService } from "../services/messageService.js"
 
 const createMessage = async (req, res) => {
   try {
-    const { roomId, sender, content,followMessageId } = req.body
+    const { roomId, sender, content, followMessageId } = req.body
+    const files = req.files ? req.files : null
+    let assets
+    if (files) {
+      assets = files.map(file => {
+        return {
+          url: file.path,
+          type: file.mimetype
+        }
+      })
+    }
     const result = await messageService.createMessage(
-      {roomId, sender, content, followMessageId}
+      {roomId, sender, content, followMessageId, assets}
     )
     return res.status(200).json(result)
   }

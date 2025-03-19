@@ -115,6 +115,44 @@ const getUserById = async (req, res) => {
   }
 }
 
+const editUser = async (req, res) => {
+  try {
+    const {
+      userId,
+      name,
+      picture,
+      phone,
+      email,
+      address,
+      userName,
+      background,
+      link,
+      bio,
+      history
+    } = req.body
+    const user = await userService.editUser(
+      userId, {
+        name,
+        picture,
+        phone,
+        email,
+        address,
+        userName,
+        background,
+        link,
+        bio,
+        history
+      }
+    )
+
+    return res.status(200).json(user)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+
 export const userController = {
   getDatUser,
   getAllUser,
@@ -125,5 +163,6 @@ export const userController = {
   deleteFriendRequest,
   unfriend,
   getFriends,
-  getUserById
+  getUserById,
+  editUser
 }

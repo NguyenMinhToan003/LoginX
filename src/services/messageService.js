@@ -1,7 +1,8 @@
+import { uploadFilesToCloudinary } from '~/configs/cloudinary.js'
 import { messageModel } from '../models/messagesModel.js'
 import { roomChatModel } from '../models/roomChatModel.js'
 
-const createMessage = async ({roomId, sender, content,followMessageId}) => {
+const createMessage = async ({roomId, sender, content,followMessageId, assets }) => {
   try {
     const room = await roomChatModel.findRoomById(roomId)
 
@@ -16,11 +17,19 @@ const createMessage = async ({roomId, sender, content,followMessageId}) => {
         else {
           followMessageId = null
         }
+        let images = []
+        if (assets) {
+          const fileInfo = await uploadFilesToCloudinary(assets)
+          console.log('fileInfo', fileInfo)
+          images = fileInfo
+        } 
+
         const message = await messageModel.createMessage(
-          {roomId, sender, content, followMessageId}
+          {roomId, sender, content, followMessageId, images}
         )
         return {
           ...message,
+          images,
           message : 'create message'
         }
       }

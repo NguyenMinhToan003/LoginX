@@ -7,17 +7,22 @@ const MESSAGE_SCHEMA = Joi.object({
   roomId: Joi.string().required(),
   sender: Joi.string().required(),
   content: Joi.string().required(),
+  images: Joi.array().items(Joi.object({
+    url: Joi.string().required(),
+    public_id: Joi.string().required()
+  })).default([]),
   followMessageId: Joi.string().default(null),
   status: Joi.string().valid('read', 'delete').default('read'),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
-const createMessage = async({ roomId, sender, content, followMessageId=null}) => {
+const createMessage = async({ roomId, sender, content, followMessageId=null,images}) => {
   try {
     let data = {
       roomId,
       sender,
-      content
+      content,
+      images,
     }
     data = await MESSAGE_SCHEMA.validateAsync(data, { abortEarly: false })
     if (followMessageId)
@@ -65,6 +70,7 @@ const getAllMessage = async (roomId) => {
           status: 1,
           createdAt: 1,
           updatedAt: 1,
+          images: 1,
           'followedMessage._id': 1,
           'followedMessage.content': 1
         }
