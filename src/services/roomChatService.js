@@ -1,3 +1,4 @@
+import { userModel } from "~/models/userModel.js";
 import { roomChatModel } from "../models/roomChatModel.js"
 
 const createRoom = async (type, name, avartar, admins, members) => {
@@ -7,8 +8,35 @@ const createRoom = async (type, name, avartar, admins, members) => {
     members = [...members, ...uniqueAdmins]
     const uniqueMembers = members.filter(
       (member, index) => members.indexOf(member) === index);
-    
+    if (type === 'private' && uniqueMembers.length > 2)
+      return { message: "Private room only 2 members" }
+    const exitsRoom = await roomChatModel.findRoomPrivate(uniqueMembers)
+    if (exitsRoom) return exitsRoom
     return await roomChatModel.createRoom(type, name, avartar, uniqueAdmins, uniqueMembers)
+  }
+  catch (error) {
+    throw error
+  }
+}
+const findOrCreateRoomPrivate = async (userSeachId, userOrtherId) => {
+  try {
+    const userSearch = await userModel.findUserById(userSeachId)
+    const userOrther = await userModel.findUserById(userOrtherId)
+    if (!userSearch || !userOrther) return { message: "User not found" }
+    const members = [userSeachId, userOrtherId]
+    let exitsRoom = await roomChatModel.findRoomPrivate(members)
+    
+    if (exitsRoom) {
+      exitsRoom.info.name = userOrther.name
+      exitsRoom.info.avartar = userOrther.picture
+      return exitsRoom
+    }
+    return await roomChatModel.createRoom(
+      'private',
+      userSearch.name +'-'+ userOrther.name,
+      userSearch?.picture + '-' + userOrther?.picture,
+      members,
+      members)
   }
   catch (error) {
     throw error
@@ -122,6 +150,7 @@ const updateInfoRoom = async (roomId, name, avartar, admins, userAction) => {
 
 export const roomChatService = {
   createRoom,
+  findOrCreateRoomPrivate,
   joinRoom,
   getRoom,
   deleteRoom,

@@ -9,6 +9,8 @@ const router = express.Router();
 // tao moi phong chat
 router.route('/create')
   .post(roomChatValidation.createRoom, roomChatController.createRoom)
+router.route('/find-or-create-room-private')
+  .post(roomChatValidation.findOrCreateRoomPrivate, roomChatController.findOrCreateRoomPrivate)
 // tham gia phong chat
 router.route('/join')
   .post(roomChatValidation.joinRoom, roomChatController.joinRoom)

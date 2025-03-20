@@ -7,9 +7,9 @@ const ROOMCHAT_COLLECTION = 'roomchats'
 const ROOMCHAT_SCHEMA = Joi.object({
   type: Joi.string().valid('group', 'private').required(),
   info: Joi.object({
-    name: Joi.string().required(),
-    avartar: Joi.string(),
-    admins: Joi.array().items(Joi.string()).required().min(1),
+    name: Joi.string().optional(),
+    avartar: Joi.string().optional(),
+    admins: Joi.array().items(Joi.string()).optional()
   }),
   members: Joi.array().items(Joi.string()).min(1).required(),
   createdAt: Joi.date().timestamp().default(Date.now()),
@@ -56,7 +56,7 @@ const joinRoom = async (roomId, members) => {
 
 const findInfoRoomChatById = async (roomId) => {
   try {
-    return await GET_DB().collection(ROOMCHAT_COLLECTION).aggregate([
+    const rooms = await GET_DB().collection(ROOMCHAT_COLLECTION).aggregate([
       { $match: { _id: new ObjectId(roomId) } },
       {
         $lookup: {
@@ -75,6 +75,8 @@ const findInfoRoomChatById = async (roomId) => {
         }
       }
     ]).toArray()
+    return rooms[0]
+    
   }
   catch (error) {
     throw error
@@ -138,10 +140,23 @@ const updateInfoRoom = async (roomId, name, avartar, admins, membersUpdate) => {
   }
 }
 
+const findRoomPrivate = async (members) => {
+  try {
+    return await GET_DB().collection(ROOMCHAT_COLLECTION).findOne({
+      type: 'private',
+      members: { $all: members }
+    })
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const roomChatModel = {
   ROOMCHAT_COLLECTION,
   ROOMCHAT_SCHEMA,
   createRoom,
+  findRoomPrivate,
   findRoomById,
   joinRoom,
   deleteRoom,

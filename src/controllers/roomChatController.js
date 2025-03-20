@@ -10,6 +10,16 @@ const createRoom = async (req, res) => {
     return res.status(400).json({ message: error.message })
   }
 }
+const findOrCreateRoomPrivate = async (req, res) => {
+  try {
+    const { userSearchId,userOrtherId } = req.body
+    const result = await roomChatService.findOrCreateRoomPrivate(userSearchId,userOrtherId)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  } 
+}
 const joinRoom = async (req, res) => {
   try {
     const { roomId, members } = req.body
@@ -82,6 +92,7 @@ const updateInfoRoom = async (req, res) => {
 
 export const roomChatController = {
   createRoom,
+  findOrCreateRoomPrivate,
   joinRoom,
   getRoom,
   deleteRoom,
