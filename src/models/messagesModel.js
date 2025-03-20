@@ -71,6 +71,7 @@ const getAllMessage = async (roomId) => {
           createdAt: 1,
           updatedAt: 1,
           images: 1,
+          'followedMessage.images': 1,
           'followedMessage._id': 1,
           'followedMessage.content': 1
         }
@@ -90,6 +91,7 @@ const deleteMessage = async (messageId) => {
       {
         $set: {
           status: 'delete',
+          images: [],
           content: 'This message has been deleted',
           updatedAt: Date.now()
         }

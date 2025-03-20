@@ -1,4 +1,4 @@
-import { uploadFilesToCloudinary } from '~/configs/cloudinary.js'
+import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from '~/configs/cloudinary.js'
 import { messageModel } from '../models/messagesModel.js'
 import { roomChatModel } from '../models/roomChatModel.js'
 
@@ -20,7 +20,6 @@ const createMessage = async ({roomId, sender, content,followMessageId, assets })
         let images = []
         if (assets) {
           const fileInfo = await uploadFilesToCloudinary(assets)
-          console.log('fileInfo', fileInfo)
           images = fileInfo
         } 
 
@@ -67,6 +66,7 @@ const deleteMessage = async (userId, messageId) => {
     if(message?.status === 'delete')
       return { message: 'This message has been deleted' }
     const result = await messageModel.deleteMessage(messageId)
+    const deleteImages = await deleteFilesFromCloudinary(message?.images)
     return {
       ...result,
       message: 'Delete message success'
