@@ -6,10 +6,11 @@ const MESSAGE_COLLECTION = 'messages';
 const MESSAGE_SCHEMA = Joi.object({
   roomId: Joi.string().required(),
   sender: Joi.string().required(),
-  content: Joi.string().required(),
+  content: Joi.string(),
   images: Joi.array().items(Joi.object({
     url: Joi.string().required(),
-    public_id: Joi.string().required()
+    public_id: Joi.string().required(),
+    type: Joi.string().required()
   })).default([]),
   followMessageId: Joi.string().default(null),
   status: Joi.string().valid('read', 'delete').default('read'),

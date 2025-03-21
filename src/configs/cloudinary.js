@@ -19,13 +19,13 @@ export const uploadFilesToCloudinary = async (files) => {
   for (const file of files) {
     try {
       const result = await cloudinary.uploader.upload(file.url, {
-        folder: 'CHAT_LOGIN_X', // Thư mục trên Cloudinary
-        resource_type: 'auto'// Loại file
+        folder: 'CHAT_LOGIN_X',
+        resource_type: 'auto'
       })
-
       uploadedFiles.push({
-        url: result.secure_url, // URL file trên Cloudinary
-        public_id: result.public_id // ID file trên Cloudinary
+        url: result.secure_url,
+        public_id: result.public_id,
+        type: result.resource_type
       })
       await removeFile(file.url)
     } catch (error) {
