@@ -1,6 +1,7 @@
 import express from 'express'
 import { roomChatValidation } from '../validations/roomChatValidation.js';
 import { roomChatController } from '../controllers/roomChatController.js';
+import { uploadMulter } from '~/middleware/multer/multer.js';
 
 
 
@@ -8,7 +9,10 @@ const router = express.Router();
 
 // tao moi phong chat
 router.route('/create')
-  .post(roomChatValidation.createRoom, roomChatController.createRoom)
+  .post(
+    uploadMulter.array('files', 1),
+    roomChatValidation.createRoom,
+    roomChatController.createRoom)
 router.route('/find-or-create-room-private')
   .post(roomChatValidation.findOrCreateRoomPrivate, roomChatController.findOrCreateRoomPrivate)
 // tham gia phong chat
@@ -28,5 +32,8 @@ router.route('/leave')
   .post(roomChatValidation.leaveRoom, roomChatController.leaveRoom)
 // cap nhat thong tin phong chat
 router.route('/update-info')
-  .post(roomChatValidation.updateInfoRoom, roomChatController.updateInfoRoom)
+  .post(
+    uploadMulter.array('files', 1),
+    roomChatValidation.updateInfoRoom,
+    roomChatController.updateInfoRoom)
 export const roomChatRouter = router;

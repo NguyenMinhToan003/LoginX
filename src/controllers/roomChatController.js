@@ -2,8 +2,20 @@ import { roomChatService } from "../services/roomChatService.js"
 
 const createRoom = async (req, res) => {
   try {
-    const { type, name, avartar, admins, members } = req.body
-    const result = await roomChatService.createRoom(type, name, avartar, admins, members)
+    const { type, name, admins, members } = req.body
+    const files = req.files ? req.files : null
+    let file = files?.length > 0 
+      ? {
+        url: files[0]?.path,
+        type: files[0]?.mimetype
+      }
+      : {
+        url: 'empty',
+        public_id: 'empty',
+        type: 'empty'
+      }
+
+    const result = await roomChatService.createRoom(type, name, file, admins, members)
     return res.status(200).json(result)
   }
   catch (error) {
@@ -43,7 +55,8 @@ const getRoom = async (req, res) => {
 const getRoomChatByUserId = async (req, res) => {
   try {
     const { userId } = req.query
-    const result = await roomChatService.getRoomChatByUserId(userId)
+    const type = req.query.type ? req.query.type : null
+    const result = await roomChatService.getRoomChatByUserId(userId, type)
     return res.status(200).json(result)
   }
   catch (error) {
@@ -75,11 +88,22 @@ const leaveRoom = async (req, res) => {
 
 const updateInfoRoom = async (req, res) => {
   try {
-    const { roomId, name, avartar, admins, userAction } = req.body
+    const { roomId, name, admins, userAction } = req.body
+    const files = req.files ? req.files : null
+    let file = files?.length > 0 
+      ? {
+        url: files[0]?.path,
+        type: files[0]?.mimetype
+      }
+      : {
+        url: 'empty',
+        public_id: 'empty',
+        type: 'empty'
+      }
     const result = await roomChatService.updateInfoRoom(
       roomId,
       name,
-      avartar,
+      file,
       admins,
       userAction
     )
@@ -98,5 +122,5 @@ export const roomChatController = {
   deleteRoom,
   getRoomChatByUserId,
   leaveRoom,
-   updateInfoRoom
+  updateInfoRoom
 }

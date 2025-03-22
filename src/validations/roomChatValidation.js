@@ -5,7 +5,6 @@ const createRoom = async (req, res, next) => {
     const schema = Joi.object({
       type:Joi.string().required(),
       name:Joi.string().required(),
-      avartar:Joi.string(),
       admins:Joi.array().items(Joi.string()).required().min(1),
       members:Joi.array().items(Joi.string()).required().min(1),
     })
@@ -59,6 +58,7 @@ const getRoomChatByUserId = async (req, res, next) => {
   try {
     const schema = Joi.object({
       userId: Joi.string().required(),
+      type: Joi.string(),
     })
     await schema.validateAsync(req.query, { abortEarly: false })
     next()
@@ -67,6 +67,7 @@ const getRoomChatByUserId = async (req, res, next) => {
     return res.status(400).json({ message: error.message })
   }
 }
+
 const deleteRoom = async (req, res, next) => {
   try {
     const schema = Joi.object({
@@ -100,7 +101,6 @@ const updateInfoRoom = async (req, res, next) => {
     const schema = Joi.object({
       roomId: Joi.string().required(),
       name: Joi.string().required(),
-      avartar: Joi.string().required(),
       admins: Joi.array().items(Joi.string()).min(1).required(),
       userAction: Joi.string().required()
     })

@@ -8,7 +8,11 @@ const ROOMCHAT_SCHEMA = Joi.object({
   type: Joi.string().valid('group', 'private').required(),
   info: Joi.object({
     name: Joi.string().optional(),
-    avartar: Joi.string().optional(),
+    avartar: Joi.object({
+      url: Joi.string().default(null),
+      public_id: Joi.string().default(null),
+      type: Joi.string().default(null)
+    }),
     admins: Joi.array().items(Joi.string()).optional()
   }),
   members: Joi.array().items(Joi.string()).min(1).required(),
@@ -95,6 +99,18 @@ const findRoomChatByUserId = async (userId)=>{
   }
 }
 
+const findRoomChatByUserIdAndType = async (userId, type) => {
+  try {
+    const rooms = GET_DB().collection(ROOMCHAT_COLLECTION).find(
+      { members: { $in: [userId] }, type: type },
+    ).toArray()
+    return rooms
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 const deleteRoom = async (roomId) => {
   try {
     const deleteMessage = await GET_DB().collection(messageModel.MESSAGE_COLLECTION).deleteMany({ roomId: roomId })
@@ -119,18 +135,23 @@ const leaveRoom = async (roomId, userId) => {
   }
 }
 
-const updateInfoRoom = async (roomId, name, avartar, admins, membersUpdate) => {
+const updateInfoRoom = async (type,roomId, name, avartar, admins, membersUpdate) => {
   try {
+    let data = {
+      type,
+      info: {
+        name,
+        avartar,
+        admins,
+      },
+      members: membersUpdate,
+      updatedAt: Date.now()
+    }
+    data = await ROOMCHAT_SCHEMA.validateAsync(data, { abortEarly: false })
     const result = await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
       { _id: new ObjectId(roomId) },
       {
-        $set: {
-          'info.name': name,
-          'info.avartar': avartar,
-          'info.admins': admins,
-          'members': membersUpdate,
-          'updatedAt': Date.now()
-        }
+        $set: data
       }
     )
     return result
@@ -162,6 +183,7 @@ export const roomChatModel = {
   deleteRoom,
   findInfoRoomChatById,
   findRoomChatByUserId,
+  findRoomChatByUserIdAndType,
   leaveRoom,
   updateInfoRoom
 }

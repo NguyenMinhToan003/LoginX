@@ -1,7 +1,8 @@
 import { userModel } from "~/models/userModel.js";
 import { roomChatModel } from "../models/roomChatModel.js"
+import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from "~/configs/cloudinary.js";
 
-const createRoom = async (type, name, avartar, admins, members) => {
+const createRoom = async (type, name, file, admins, members) => {
   try {
     const uniqueAdmins = admins.filter(
       (admin, index) => admins.indexOf(admin) === index);
@@ -11,8 +12,14 @@ const createRoom = async (type, name, avartar, admins, members) => {
     if (type === 'private' && uniqueMembers.length > 2)
       return { message: "Private room only 2 members" }
     const exitsRoom = await roomChatModel.findRoomPrivate(uniqueMembers)
-    if (exitsRoom) return exitsRoom
-    return await roomChatModel.createRoom(type, name, avartar, uniqueAdmins, uniqueMembers)
+    if (exitsRoom && type === 'private') return exitsRoom
+    let avartar = [file]
+
+    if (file.url !== 'empty') {
+      avartar = await uploadFilesToCloudinary([file])
+    }
+
+    return await roomChatModel.createRoom(type, name, avartar[0], uniqueAdmins, uniqueMembers)
   }
   catch (error) {
     throw error
@@ -65,8 +72,11 @@ const getRoom = async (roomId) => {
     throw error
   }
 }
-const getRoomChatByUserId = async (userId) => {
+const getRoomChatByUserId = async (userId, type) => {
   try {
+
+    if (type !== null)
+      return await roomChatModel.findRoomChatByUserIdAndType(userId, type)
     return await roomChatModel.findRoomChatByUserId(userId)
   }
   catch (error) {
@@ -116,7 +126,7 @@ const leaveRoom = async (roomId, userId) => {
   }
 }
 
-const updateInfoRoom = async (roomId, name, avartar, admins, userAction) => {
+const updateInfoRoom = async (roomId, name, file, admins, userAction) => {
   try {
     const room = await roomChatModel.findRoomById(roomId)
     if (!room) return { message: "Room not found" }
@@ -130,11 +140,20 @@ const updateInfoRoom = async (roomId, name, avartar, admins, userAction) => {
     const membersUpdate = [...room.members, ...uniqueAdmins]
     const uniqueMembers = membersUpdate.filter(
       (member, index) => membersUpdate.indexOf(member) === index);
-
+    if (room.info.avartar.url !== 'empty') {
+      await deleteFilesFromCloudinary([room.info.avartar])
+    }
+   
+    let avartar = [file]
+    if (file.url !== 'empty') {
+      console.log(file)
+      avartar = await uploadFilesToCloudinary([file])
+    }
     const result = await roomChatModel.updateInfoRoom(
+      room.type,
       roomId,
       name,
-      avartar,
+      avartar[0],
       uniqueAdmins,
       uniqueMembers
     )
