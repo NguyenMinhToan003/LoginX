@@ -150,7 +150,7 @@ const getComments = async (postId) => {
 
 const getCommentFollowCommentId = async (commentId) => {
   try {
-    console.log(commentId)
+
     const comment = await postCommentModel.findCommentById(commentId)
     if (!comment) return { message: 'Comment not found' }
     const result = await postCommentModel.findCommentFollowCommentId(commentId)
@@ -207,7 +207,7 @@ const interactionPost = async ({ postId, userId, type }) => {
       postId: new ObjectId(postId),
       userId
     })
-    console.log('findInteraction',findInteraction)
+
     let result = {}
     if (findInteraction.length === 0 ){
       result = postInteractionModel.createPostInteraction({

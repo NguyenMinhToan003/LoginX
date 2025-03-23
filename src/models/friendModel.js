@@ -76,7 +76,7 @@ const findFriendsByUserId = async (userId) => {
         }
       }
     ]).toArray()
-    console.log(friends)
+
     return friends
   }
   catch (error) {

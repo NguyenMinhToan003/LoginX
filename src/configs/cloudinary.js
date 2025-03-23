@@ -38,7 +38,7 @@ export const uploadFilesToCloudinary = async (files) => {
 
 export const deleteFilesFromCloudinary = async (files) => {
   try {
-    console.log(files)
+
     let result = {
       ok: 0,
       error: 0

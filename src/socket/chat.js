@@ -1,5 +1,5 @@
 export const ChatSocket = (socket,io) => {
-    socket.on('join-room', (data) => {
+  socket.on('join-room', (data) => {
       socket.join(data.roomId)
     })
   

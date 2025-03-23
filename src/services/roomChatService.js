@@ -150,7 +150,7 @@ const updateInfoRoom = async (roomId, name, file, admins, userAction) => {
    
     let avartar = [file]
     if (file.url !== 'empty') {
-      console.log(file)
+
       avartar = await uploadFilesToCloudinary([file])
     }
     const result = await roomChatModel.updateInfoRoom(
