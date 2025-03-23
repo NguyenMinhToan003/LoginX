@@ -41,7 +41,11 @@ const findOrCreateRoomPrivate = async (userSeachId, userOrtherId) => {
     return await roomChatModel.createRoom(
       'private',
       userSearch.name +'-'+ userOrther.name,
-      userSearch?.picture + '-' + userOrther?.picture,
+      {
+        url: userSearch?.picture.url + '-' + userOrther?.picture.url,
+        public_id: userSearch?.picture.public_id + '-' + userOrther?.picture.public_id,
+        type: 'image'
+      },
       members,
       members)
   }
