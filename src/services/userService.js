@@ -148,7 +148,6 @@ const editUser = async (userId, data) => {
       data.picture = user.picture
     }
     data.typeAccount = user.typeAccount
-    console.log(data)
     const result = await userModel.editUser(userId, data)
     return result
   }
