@@ -1,8 +1,9 @@
 import express from 'express'
 import passport from 'passport'
-import { authController } from '../controllers/authController.js'
-import { authValidation } from '~/validations/authValidation.js'
-const router = express.Router()
+import { authController } from '../controllers/authController.js';
+import { userController } from '../controllers/userController.js';
+import { authValidation } from '~/validations/authValidation.js';
+const router = express.Router();
 
 // Đăng nhập với Twitter
 router.route('/twitter')
@@ -11,14 +12,7 @@ router.route('/twitter')
 router.route('/twitter/callback')
   .get(
     passport.authenticate('twitter', { failureRedirect: '/' }),
-    
-    (req, res) => {
-      if (req.user.code === 0)
-        authController.loginWithTwitter(req, res)
-      else if (req.user.code === 1||req.user.code === 2) {
-        res.redirect(`http://localhost:5173/addSocial/code=${req.user.code}`)
-      }
-    }
+    authController.loginWithTwitter
 )
 
 // Đăng nhập với GitHub
@@ -28,13 +22,7 @@ router.route('/github')
 router.route('/github/callback')
   .get(
     passport.authenticate('github', { failureRedirect: '/' }),
-    (req, res) => {
-      if (req.user.code === 0)
-        authController.loginWithGithub(req, res)
-      else if (req.user.code === 1||req.user.code === 2) {
-        res.redirect(`http://localhost:5173/addSocial/code=${req.user.code}`)
-      }
-    }
+    authController.loginWithGithub
   )
 
  // su ly sau khi lay duoc token dawng nhap 
@@ -46,4 +34,4 @@ router.route('/login')
   .post(authValidation.login, authController.login)
 router.route('/register')
   .post(authValidation.register, authController.register)
-export const authRouter = router
+export const authRouter = router;

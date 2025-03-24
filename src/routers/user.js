@@ -2,10 +2,7 @@ import express from 'express'
 
 import { userController } from '../controllers/userController.js';
 import { userValidation } from '../validations/userValidation.js';
-import multer from 'multer';
 import { uploadMulter } from '~/middleware/multer/multer.js';
-import { authAddUserClient } from '~/middleware/addReq/addUserClient.js';
-import passport from 'passport';
 const router = express.Router();
 
 
@@ -36,20 +33,6 @@ router.route('/unfriend')
 router.route('/search')
   .get(userValidation.searchUser, userController.searchUser)
 
-router.route('/add-social-github')
-  .get(authAddUserClient,
-    (req, res) => {
-      req.session.clientId = req.clientId,
-      passport.authenticate('github')(req, res)
-    }
-)
-router.route('/add-social-twitter')
-  .get(authAddUserClient,
-    (req, res) => {
-      req.session.clientId = req.clientId,
-      passport.authenticate('twitter')(req, res)
-    }
-)
 
 
 

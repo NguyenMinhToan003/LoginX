@@ -103,17 +103,6 @@ const findUserByEmail = async (email) => {
   }
 }
 
-const addSocial = async (id, idSocial,type) => {
-  try {
-    const result = await GET_DB().collection(USER_COLLECTION).updateOne({ _id: id },
-      { $set: { idSocial, typeAccount:'github',typeAccount:type} })
-    return result
-  }
-  catch (error) {
-    throw error
-  }
-}
-
 export const userModel = {
   USER_COLLECTION,
   findUserById,
@@ -123,5 +112,4 @@ export const userModel = {
   editUser,
   findUserByIdSocial,
   findUserByEmail,
-  addSocial
 }

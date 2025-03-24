@@ -10,31 +10,9 @@ export const gitHubStrategy = () => {
         clientSecret: process.env.GITHUB_SECRET,
         callbackURL: `${process.env.HOST_CALLBACK_PASSPORT}/api/auth/github/callback`,
         scope: ['user:email'],
-        passReqToCallback: true,
       },
-      async (req, accessToken, refreshToken, profile, cb) => {
-        try {
-          const clientId  = req.query.state
-          if (clientId) {
-            const user = await userModel.findUserByIdSocial(profile.id);
-            if (!user) {
-
-              await userModel.addSocial(clientId, profile.id,'github');
-              return cb(null, {
-                id: clientId, idSocial: profile.id, ...profile,
-                code:2
-              });
-            }
-
-            return cb(null, {
-              ...user,
-              code:1
-            });
-          }
-          return cb(null, {...profile, code:0});
-        } catch (err) {
-          return cb(err);
-        }
+      (accessToken, refreshToken, profile, cb) => {
+        return cb(null, profile)
       }
     )
   );
