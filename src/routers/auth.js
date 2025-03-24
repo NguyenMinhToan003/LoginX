@@ -2,6 +2,7 @@ import express from 'express'
 import passport from 'passport'
 import { authController } from '../controllers/authController.js';
 import { userController } from '../controllers/userController.js';
+import { authValidation } from '~/validations/authValidation.js';
 const router = express.Router();
 
 // Đăng nhập với Twitter
@@ -28,6 +29,9 @@ router.route('/github/callback')
 router.route('/decode-token-login')
   .get(authController.decodeTokenLogin)
 
-router.route('/user')
-  .get(userController.getDatUser)
+// Đăng nhập với Local
+router.route('/login')
+  .post(authValidation.login, authController.login)
+router.route('/register')
+  .post(authValidation.register, authController.register)
 export const authRouter = router;

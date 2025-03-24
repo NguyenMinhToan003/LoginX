@@ -131,6 +131,7 @@ const editUser = async (req, res, next) => {
   }
 }
 
+
 export const userValidation = {
   addFriendRequest,
   respondFriendRequest,

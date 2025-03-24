@@ -54,9 +54,34 @@ const decodeTokenLogin = async (req, res) => {
     return res.status(400).json({ message: error.message })
   }
 }
+const register = async (req, res) => {
+  try {
+    const { email, password, name } = req.body
+    const user = await authService.register({ email, password, name })
+    return res.status(200).json(user)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+}
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    const user = await authService.loginLocal({ email, password })
+    if (user) {
+      return res.status(200).json(user)
+    }
+    return res.status(404).json({ message: 'not user' })
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+}
 
 export const authController = {
   loginWithTwitter,
   loginWithGithub,
-  decodeTokenLogin
+  decodeTokenLogin,
+  register,
+  login
 }

@@ -1,11 +1,11 @@
-import Joi, { link } from "joi"
+import Joi from "joi"
 import { GET_DB } from "../configs/db.js"
 
 const USER_COLLECTION = 'users'
 export const userSchema = Joi.object({
   _id: Joi.string().required(),
   name: Joi.string().required(),
-  picture: Joi.string().required(),
+  picture: Joi.string().default(null),
   typeAccount: Joi.string().required().valid('local', 'twitter','github'),
   password: Joi.string().default(null),
   email: Joi.string().email().default(null),
@@ -16,6 +16,7 @@ export const userSchema = Joi.object({
   link: Joi.array().items(Joi.string()).default([]),
   bio: Joi.string().default(null),
   history: Joi.string().default(null),
+  idSocial: Joi.string().default(null),
   timeLogin: Joi.date().timestamp().default(Date.now()),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
@@ -72,11 +73,35 @@ const editUser = async (id, data) => {
   }
 }
 
+const findUserByIdSocial = async (idSocial) => {
+  try {
+    const user = await GET_DB().collection(USER_COLLECTION).findOne({ idSocial })
+    return user
+  }
+  catch (error) {
+    throw error
+  }
+}
+
+const findUserByEmail = async (email) => {
+  try {
+    const user = await GET_DB().collection(USER_COLLECTION).findOne({
+      email
+    })
+    return user
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const userModel = {
   USER_COLLECTION,
   findUserById,
   createUser,
   findAllUser,
   findUserByQuery,
-  editUser
+  editUser,
+  findUserByIdSocial,
+  findUserByEmail
 }
