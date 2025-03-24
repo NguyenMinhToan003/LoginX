@@ -23,6 +23,9 @@ const createMessage = async ({roomId, sender, content,followMessageId, assets })
           images = fileInfo
         } 
 
+        if (!content && images.length === 0)
+          return { message: 'Content or images is required' }
+
         const message = await messageModel.createMessage(
           {roomId, sender, content, followMessageId, images}
         )

@@ -5,7 +5,7 @@ const createMessage = async (req, res, next) => {
     const schema = Joi.object({
       roomId: Joi.string().required(),
       sender: Joi.string().required(),
-      content: Joi.string().required(),
+      content: Joi.string(),
       followMessageId: Joi.string(),
     })
     await schema.validateAsync(req.body, { abortEarly: false })
