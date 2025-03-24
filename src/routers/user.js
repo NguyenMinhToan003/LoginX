@@ -2,6 +2,8 @@ import express from 'express'
 
 import { userController } from '../controllers/userController.js';
 import { userValidation } from '../validations/userValidation.js';
+import multer from 'multer';
+import { uploadMulter } from '~/middleware/multer/multer.js';
 const router = express.Router();
 
 
@@ -10,7 +12,11 @@ router.route('/')
 router.route('/get-user-by-id')
   .get(userValidation.getUserById, userController.getUserById)
 router.route('/edit')
-  .post(userValidation.editUser, userController.editUser)
+  .post(
+    uploadMulter.array('files',1),
+    userValidation.editUser,
+    userController.editUser
+  )
 router.route('/all')
   .get(userController.getAllUser)
 router.route('/request-friend')

@@ -42,8 +42,8 @@ const findOrCreateRoomPrivate = async (userSeachId, userOrtherId) => {
       'private',
       userSearch.name +'-'+ userOrther.name,
       {
-        url: userSearch?.picture.url + '-' + userOrther?.picture.url,
-        public_id: userSearch?.picture.public_id + '-' + userOrther?.picture.public_id,
+        url: 'empty',
+        public_id: 'empty',
         type: 'image'
       },
       members,
@@ -144,14 +144,17 @@ const updateInfoRoom = async (roomId, name, file, admins, userAction) => {
     const membersUpdate = [...room.members, ...uniqueAdmins]
     const uniqueMembers = membersUpdate.filter(
       (member, index) => membersUpdate.indexOf(member) === index);
-    if (room.info.avartar.url !== 'empty') {
-      await deleteFilesFromCloudinary([room.info.avartar])
-    }
+    // if (room.info.avartar.url !== 'empty') {
+      
+    // }
    
     let avartar = [file]
     if (file.url !== 'empty') {
-
+      await deleteFilesFromCloudinary([room.info.avartar])
       avartar = await uploadFilesToCloudinary([file])
+    }
+    else {
+      avartar = [room.info.avartar]
     }
     const result = await roomChatModel.updateInfoRoom(
       room.type,

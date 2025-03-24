@@ -13,7 +13,11 @@ const loginWithTwitter = async (user) => {
       _id: uuidv4(),
       idSocial: user.id,
       name: user.username,
-      picture: user.photos[0].value,
+      picture: {
+        url: user.photos[0].value,
+        public_id: 'empty',
+        type: 'image'
+      },
       typeAccount: 'twitter',
     }
     return await userModel.createUser(data)
@@ -34,7 +38,11 @@ const loginWithGithub = async (user) => {
       _id: uuidv4(),
       idSocial: user.id,
       name: user.username,
-      picture: user.photos[0].value,
+      picture: {
+        url: user.photos[0].value,
+        public_id: 'empty',
+        type: 'image'
+      },
       typeAccount: 'github',
       }
       

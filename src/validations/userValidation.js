@@ -113,7 +113,6 @@ const editUser = async (req, res, next) => {
     const schema = Joi.object({
       userId: Joi.string().required(),
       name: Joi.string().required(),
-      picture: Joi.string().required(),
       email: Joi.string().email(),
       phone: Joi.string().min(10).max(11).regex(/^[0-9]+$/),
       address: Joi.string(),

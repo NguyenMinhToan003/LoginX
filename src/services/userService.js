@@ -1,4 +1,5 @@
 
+import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from "~/configs/cloudinary"
 import { friendRequestModel } from "~/models/friend_requestsModel"
 import { friendModel } from "~/models/friendModel"
 import { userModel } from "~/models/userModel"
@@ -138,6 +139,16 @@ const editUser = async (userId, data) => {
     const user = await userModel.findUserById(userId)
     if (!user) return { message: 'User not found' }
     data.updatedAt = Date.now()
+    if (data.picture.url!=='empty')  {
+      await deleteFilesFromCloudinary([user.picture])
+      data.picture = await uploadFilesToCloudinary([data.picture])
+      data.picture = data.picture[0]// lay ra phan tu dau tien
+    }
+    else {
+      data.picture = user.picture
+    }
+    data.typeAccount = user.typeAccount
+    console.log(data)
     const result = await userModel.editUser(userId, data)
     return result
   }

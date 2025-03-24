@@ -5,7 +5,11 @@ const USER_COLLECTION = 'users'
 export const userSchema = Joi.object({
   _id: Joi.string().required(),
   name: Joi.string().required(),
-  picture: Joi.string().default(null),
+  picture: Joi.object({
+    url: Joi.string().default(null),
+    public_id: Joi.string().default(null),
+    type: Joi.string().default(null)
+  }),
   typeAccount: Joi.string().required().valid('local', 'twitter','github'),
   password: Joi.string().default(null),
   email: Joi.string().email().default(null),
@@ -64,6 +68,10 @@ const findUserByQuery = async (query) => {
 }
 const editUser = async (id, data) => {
   try {
+    data = await userSchema.validateAsync({
+      ...data,
+      _id: id
+    }, { abortEarly: false })
     const result = await GET_DB().collection(USER_COLLECTION).updateOne({ _id: id },
       { $set: data })
     return result
