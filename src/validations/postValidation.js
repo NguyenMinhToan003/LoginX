@@ -3,7 +3,6 @@ import Joi from "joi";
 const createPost = async (req, res, next) => {
   try {
     const schema = Joi.object({
-      title: Joi.string().required(),
       content: Joi.string().required(),
       authorId: Joi.string().required(),
     })
@@ -167,8 +166,28 @@ const getPostById = async (req, res, next) => {
   catch (error) {
     return res.status(400).json({ error: error.message });
   }
-
 }
+
+const editPost = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      postId: Joi.string().required(),
+      content: Joi.string().required(),
+      authorId: Joi.string().required(),
+      deleteFiles: Joi.array().items(Joi.object({
+        url: Joi.string().required(),
+        public_id: Joi.string().required(),
+        type: Joi.string().valid('image', 'video')
+      })),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false });
+    next();
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
 export const postValidation = {
   createPost,
   getPostByAuthorId,
@@ -181,5 +200,6 @@ export const postValidation = {
   searchPost,
   interactionPost,
   uninteractionPost,
-  getPostById
+  getPostById,
+  editPost
 }

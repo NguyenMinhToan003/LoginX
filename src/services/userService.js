@@ -148,6 +148,8 @@ const editUser = async (userId, data) => {
       data.picture = user.picture
     }
     data.typeAccount = user.typeAccount
+    data.idSocial = user.idSocial
+    data.password = user.password
     const result = await userModel.editUser(userId, data)
     return result
   }

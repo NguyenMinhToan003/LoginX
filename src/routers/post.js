@@ -17,6 +17,10 @@ router.route('/get-post-by-author-id')
   .get(postValidation.getPostByAuthorId, postController.getPostByAuthorId)
 router.route('/get-posts-friend')
   .get(postValidation.getPostsFriend, postController.getPostsFriend)
+router.route('/edit')
+  .post(
+    uploadMulter.array('files', 4),
+    postValidation.editPost, postController.editPost)
 router.route('/delete')
   .post(postValidation.deletePost, postController.deletePost)
 router.route('/comment')

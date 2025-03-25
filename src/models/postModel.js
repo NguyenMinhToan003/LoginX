@@ -4,12 +4,12 @@ import { GET_DB } from '~/configs/db';
 
 const POST_COLLECTION = 'posts';
 const POST_SCHEMA = Joi.object({
-  title: Joi.string().required(),
   content: Joi.string().required(),
   assets: Joi.array().items(Joi.object({
     public_id: Joi.string().required(),
-    url: Joi.string().required()
-  })).max(4).min(0).default([]),
+    url: Joi.string().required(),
+    type: Joi.string().valid('image', 'video')
+  })).max(10).min(0).default([]),
   authorId: Joi.string().required(),
   createdAt: Joi.date().default(Date.now()),
   updatedAt: Joi.date().default(null),
@@ -111,6 +111,16 @@ const findPostByQuery = async ({ title }) => {
   }
 }
 
+const updatePost = async (postId, data) => {
+  try {
+    data = await POST_SCHEMA.validateAsync(data, { abortEarly: false })
+    const result = await GET_DB().collection(POST_COLLECTION).updateOne({ _id: new ObjectId(postId) }, { $set: data })
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
   
 
 export const postModel = {
@@ -119,5 +129,6 @@ export const postModel = {
   findPostsByAuthorId,
   findPostById,
   deletePost,
-  findPostByQuery
+  findPostByQuery,
+  updatePost
 }

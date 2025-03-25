@@ -2,7 +2,7 @@ import { postService } from '../services/postService.js';
 
 const createPost = async (req, res) => {
   try {
-    const { title, content, authorId } = req.body;
+    const { content, authorId } = req.body;
     const files = req.files;
     let assets = files.map(file => ({
       url: file.path,
@@ -10,7 +10,7 @@ const createPost = async (req, res) => {
     }));
     if (files.length === 0) assets = [];
     const result = await postService.createPost(
-      { title, content, authorId, assets });
+      {content, authorId, assets });
     return res.status(201).json(result);
   }
   catch (error) {
@@ -140,6 +140,23 @@ const getPostById = async (req, res) => {
   }
 }
 
+const editPost = async (req, res) => {
+  try {
+    const { postId, content, authorId, deleteFiles=[] } = req.body
+    const files = req.files ? req.files : null
+    let assets = files ? files.map(file => ({
+      url: file.path,
+      public_id: file.filename
+    })) : []
+    const result = await postService.editPost(
+      { postId, content, authorId, assets, deleteFiles });
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
 export const postController = {
   createPost,
   getPostByAuthorId,
@@ -152,5 +169,6 @@ export const postController = {
   searchPost,
   interactionPost,
   uninteractionPost,
-  getPostById
+  getPostById,
+  editPost
 }

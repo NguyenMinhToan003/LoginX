@@ -68,10 +68,6 @@ const findUserByQuery = async (query) => {
 }
 const editUser = async (id, data) => {
   try {
-    data = await userSchema.validateAsync({
-      ...data,
-      _id: id
-    }, { abortEarly: false })
     const result = await GET_DB().collection(USER_COLLECTION).updateOne({ _id: id },
       { $set: data })
     return result

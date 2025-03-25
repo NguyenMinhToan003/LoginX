@@ -6,7 +6,7 @@ import { postInteractionModel } from '~/models/post_interactionsModel';
 import { ObjectId } from 'mongodb';
 import { friendModel } from '~/models/friendModel';
 
-const createPost = async ({ title, content, authorId, assets }) => {
+const createPost = async ({content, authorId, assets }) => {
   try {
     const author = await userModel.findUserById(authorId)
     if (!author) return { message: 'Author not found' }
@@ -14,7 +14,6 @@ const createPost = async ({ title, content, authorId, assets }) => {
     const uploadCloudinary = await uploadFilesToCloudinary(assets)
 
     const data = {
-      title,
       content,
       authorId,
       assets: uploadCloudinary,
@@ -270,6 +269,39 @@ const getPostById = async ({ postId, userId }) => {
     throw error
   }
 }
+
+const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
+  try {
+
+    const post = await postModel.findPostById(postId)
+
+    if (!post) return { message: 'Post not found' }
+    if (post.authorId !== authorId) return { message: 'Unauthorized' }
+    const uploadCloudinary = await uploadFilesToCloudinary(assets)
+
+    console.log('deleteFiles', deleteFiles)
+    const deleteInCloundinary = await deleteFilesFromCloudinary(deleteFiles)
+    console.log(deleteInCloundinary)
+    const postAssets = post.assets.filter(asset => !deleteFiles.includes(
+      file=> file.public_id === asset.public_id
+    ))
+    const data = {
+      authorId:authorId,
+      content,
+      assets: [...postAssets, ...uploadCloudinary]
+    }
+    const result = await postModel.updatePost(postId, data)
+    console.log(result)
+    return {
+      ...result,
+      message: 'action edit post'
+    }
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const postService = {
   createPost,
   getPostByAuthorId,
@@ -282,5 +314,6 @@ export const postService = {
   searchPost,
   interactionPost,
   uninteractionPost,
-  getPostById
+  getPostById,
+  editPost
 }
