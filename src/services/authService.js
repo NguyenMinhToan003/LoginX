@@ -106,11 +106,36 @@ const loginLocal = async ({ email, password }) => {
     throw error
   }
 }
+const loginWithGoogle = async (user) => {
+  try {
+      const result = await userModel.findUserByIdSocial(user.id)
+    if(result) {
+      return result
+    }
+    const data = {
+      _id: uuidv4(),
+      idSocial: user.id,
+      name: user.displayName,
+      picture: {
+        url: user.photos[0].value,
+        public_id: 'empty',
+        type: 'image'
+      },
+      typeAccount: 'google',
+      }
+      
+    return await userModel.createUser(data)
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const authService = {
   register,
   loginLocal,
   loginWithTwitter,
   loginWithGithub,
+  loginWithGoogle,
   decodeTokenLogin
 }

@@ -23,7 +23,15 @@ router.route('/github/callback')
   .get(
     passport.authenticate('github', { failureRedirect: '/' }),
     authController.loginWithGithub
-  )
+)
+router.route('/google')
+  .get(passport.authenticate('google', { scope: ['email', 'profile'] }))
+
+router.route('/google/callback')
+  .get(
+    passport.authenticate('google', { failureRedirect: '/' }),
+    authController.loginWithGoogle
+)
 
  // su ly sau khi lay duoc token dawng nhap 
 router.route('/decode-token-login')

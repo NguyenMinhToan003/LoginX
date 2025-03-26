@@ -77,10 +77,30 @@ const login = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 }
+const loginWithGoogle = async (req, res) => {
+  try {
+     const user = req.user
+    if (user) {
+      const result = await authService.loginWithGoogle(user)
+      
+      if (result?.insertedId) {
+        const token = await genarateToken({_id:result.insertedId})
+        return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
+      }
+      const token = await genarateToken({_id:result._id})
+      return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
+    }
+    // Nếu không xác thực được
+    return res.status(401).json({ message: 'Authentication failed' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 
 export const authController = {
   loginWithTwitter,
   loginWithGithub,
+  loginWithGoogle,
   decodeTokenLogin,
   register,
   login

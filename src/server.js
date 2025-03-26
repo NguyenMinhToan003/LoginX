@@ -14,6 +14,7 @@ import http from 'http'
 import { socketConnection } from './socket/index.js'
 import { configCloudinary } from './configs/cloudinary.js'
 import { corsOptionsDelegate } from './configs/cors.js'
+import { googleStrategy } from './middleware/passport/googleStrategy.js'
 
 const START_SERVER = () => {
   const app = express()
@@ -47,7 +48,7 @@ const START_SERVER = () => {
   // Cấu hình Passport
   twitterStrategy()  // Khởi tạo chiến lược Twitter
   gitHubStrategy() // Khởi tạo chiến lược GitHub
-
+  googleStrategy() // Khởi tạo chiến lược Google
   
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
