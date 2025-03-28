@@ -11,7 +11,8 @@ const ROOMCHAT_SCHEMA = Joi.object({
     avartar: Joi.object({
       url: Joi.string().default(null),
       public_id: Joi.string().default(null),
-      type: Joi.string().default(null)
+      type: Joi.string().default(null),
+      name: Joi.string().default(null),
     }),
     admins: Joi.array().items(Joi.string()).optional()
   }),

@@ -7,6 +7,7 @@ const createMessage = async (req, res, next) => {
       sender: Joi.string().required(),
       content: Joi.string(),
       followMessageId: Joi.string(),
+      embedPostId: Joi.string(),
     })
     await schema.validateAsync(req.body, { abortEarly: false })
     next()
@@ -63,5 +64,5 @@ export const messageValidation = {
   createMessage,
   getAllMessage,
   deleteMessage,
-  repMessage
+  repMessage,
 }

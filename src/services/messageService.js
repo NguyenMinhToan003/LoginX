@@ -2,7 +2,7 @@ import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from '~/configs/cl
 import { messageModel } from '../models/messagesModel.js'
 import { roomChatModel } from '../models/roomChatModel.js'
 
-const createMessage = async ({roomId, sender, content,followMessageId, assets }) => {
+const createMessage = async ({roomId, sender, content,followMessageId, assets,embedPostId }) => {
   try {
     const room = await roomChatModel.findRoomById(roomId)
 
@@ -21,13 +21,13 @@ const createMessage = async ({roomId, sender, content,followMessageId, assets })
         if (assets) {
           const fileInfo = await uploadFilesToCloudinary(assets)
           images = fileInfo
-        } 
+        }
 
         if (!content && images.length === 0)
           return { message: 'Content or images is required' }
 
         const message = await messageModel.createMessage(
-          {roomId, sender, content, followMessageId, images}
+          {roomId, sender, content, followMessageId, images,embedPostId}
         )
         return {
           ...message,
@@ -80,8 +80,9 @@ const deleteMessage = async (userId, messageId) => {
   }
 }
 
+
 export const messageService = {
   createMessage,
   getAllMessage,
-  deleteMessage,
+  deleteMessage
 }

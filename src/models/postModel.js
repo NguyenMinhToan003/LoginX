@@ -8,8 +8,10 @@ const POST_SCHEMA = Joi.object({
   assets: Joi.array().items(Joi.object({
     public_id: Joi.string().required(),
     url: Joi.string().required(),
-    type: Joi.string().valid('image', 'video')
+    type: Joi.string().valid('image', 'video'),
+    name: Joi.string(),
   })).max(10).min(0).default([]),
+  embedId: Joi.string().default(null),
   authorId: Joi.string().required(),
   createdAt: Joi.date().default(Date.now()),
   updatedAt: Joi.date().default(null),

@@ -1,6 +1,8 @@
 import Joi from "joi";
 import { GET_DB } from "../configs/db.js";
 import { ObjectId } from "mongodb";
+import { userModel } from "./userModel.js";
+import { postModel } from "./postModel.js";
 
 const MESSAGE_COLLECTION = 'messages';
 const MESSAGE_SCHEMA = Joi.object({
@@ -10,14 +12,17 @@ const MESSAGE_SCHEMA = Joi.object({
   images: Joi.array().items(Joi.object({
     url: Joi.string().required(),
     public_id: Joi.string().required(),
-    type: Joi.string().required()
+    type: Joi.string().required(),
+    name: Joi.string().default(null),
   })).default([]),
+  embedPostId: Joi.string().default(null),
   followMessageId: Joi.string().default(null),
   status: Joi.string().valid('read', 'delete').default('read'),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
-const createMessage = async({ roomId, sender, content, followMessageId=null,images}) => {
+const createMessage = async (
+  { roomId, sender, content, followMessageId = null, images, embedPostId = null }) => {
   try {
     let data = {
       roomId,
@@ -28,6 +33,9 @@ const createMessage = async({ roomId, sender, content, followMessageId=null,imag
     data = await MESSAGE_SCHEMA.validateAsync(data, { abortEarly: false })
     if (followMessageId)
       data.followMessageId = new ObjectId(followMessageId)
+
+    if (embedPostId)
+      data.embedPostId = new ObjectId(embedPostId)
     return await GET_DB().collection(MESSAGE_COLLECTION).insertOne(data)
   }
   catch (error) {
@@ -41,7 +49,7 @@ const getAllMessage = async (roomId) => {
       { $match: { roomId: roomId } },
       {
         $lookup: {
-          from: 'users',
+          from: userModel.USER_COLLECTION,
           localField: 'sender',
           foreignField: '_id',
           as: 'sender'
@@ -63,6 +71,24 @@ const getAllMessage = async (roomId) => {
         } 
       },
       {
+        $lookup: {
+          from: postModel.POST_COLLECTION,
+          localField: 'embedPostId',
+          foreignField: '_id',
+          as: 'embedPost'
+        }
+      },
+      { $unwind: { path: '$embedPost', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: userModel.USER_COLLECTION,
+          localField: 'embedPost.authorId',
+          foreignField: '_id',
+          as: 'embedPost.author'
+        }
+      },
+      { $unwind: { path: '$embedPost.author', preserveNullAndEmptyArrays: true } },
+      {
         $project: {
           'sender._id': 1,
           'sender.name': 1,
@@ -74,7 +100,14 @@ const getAllMessage = async (roomId) => {
           images: 1,
           'followedMessage.images': 1,
           'followedMessage._id': 1,
-          'followedMessage.content': 1
+          'followedMessage.content': 1,
+          'followedMessage.sender': 1,
+          'embedPost._id': 1,
+          'embedPost.content': 1,
+          'embedPost.assets': 1,
+          'embedPost.author._id': 1,
+          'embedPost.author.name': 1,
+          'embedPost.author.picture': 1,
         }
       }
     ]).toArray()

@@ -2,7 +2,7 @@ import { messageService } from "../services/messageService.js"
 
 const createMessage = async (req, res) => {
   try {
-    const { roomId, sender, content, followMessageId } = req.body
+    const { roomId, sender, content, followMessageId, embedPostId=null} = req.body
     const files = req.files ? req.files : null
     let assets
     if (files) {
@@ -14,7 +14,7 @@ const createMessage = async (req, res) => {
       })
     }
     const result = await messageService.createMessage(
-      {roomId, sender, content, followMessageId, assets}
+      {roomId, sender, content, followMessageId, assets, embedPostId}
     )
     return res.status(200).json(result)
   }
@@ -58,9 +58,11 @@ const repMessage = async (req, res) => {
   }
 }
 
+
+
 export const messageController = {
   createMessage,
   getAllMessage,
   deleteMessage,
-  repMessage
+  repMessage,
 }

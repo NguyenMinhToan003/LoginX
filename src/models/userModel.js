@@ -8,7 +8,8 @@ export const userSchema = Joi.object({
   picture: Joi.object({
     url: Joi.string().default(null),
     public_id: Joi.string().default(null),
-    type: Joi.string().default(null)
+    type: Joi.string().default(null),
+    name: Joi.string().default(null),
   }),
   typeAccount: Joi.string().required().valid('local', 'twitter','github','google'),
   password: Joi.string().default(null),
