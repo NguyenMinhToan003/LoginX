@@ -89,8 +89,13 @@ const findInfoRoomChatById = async (roomId) => {
 }
 const findRoomChatByUserId = async (userId)=>{
   try {
-    const rooms = GET_DB().collection(ROOMCHAT_COLLECTION).find(
+    const rooms = GET_DB().collection(ROOMCHAT_COLLECTION).aggregate(
       { members: { $in: [userId] } },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      },
     ).toArray()
     return rooms
 

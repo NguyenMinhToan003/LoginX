@@ -42,6 +42,11 @@ const findPostsByAuthorId = async (query) => {
       },
       { $unwind: '$author' },
       {
+        $sort: {
+          createdAt: -1
+        }
+      },
+      {
         $project: {
           title: 1,
           content: 1,

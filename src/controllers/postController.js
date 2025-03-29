@@ -30,10 +30,10 @@ const getPostByAuthorId = async (req, res) => {
   }
 }
 
-const getPostsFriend = async (req, res) => {
+const getPostsIndexShow = async (req, res) => {
   try {
     const { userId } = req.query
-    const result = await postService.getPostsFriend(userId);
+    const result = await postService.getPostsIndexShow(userId);
     return res.status(200).json(result)
   }
   catch (error) {
@@ -160,7 +160,7 @@ const editPost = async (req, res) => {
 export const postController = {
   createPost,
   getPostByAuthorId,
-  getPostsFriend,
+  getPostsIndexShow,
   deletePost,
   commentPost,
   getComments,

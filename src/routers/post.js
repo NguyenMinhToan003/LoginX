@@ -15,8 +15,8 @@ router.route('/get-post-by-id')
   .get(postValidation.getPostById, postController.getPostById)
 router.route('/get-post-by-author-id')
   .get(postValidation.getPostByAuthorId, postController.getPostByAuthorId)
-router.route('/get-posts-friend')
-  .get(postValidation.getPostsFriend, postController.getPostsFriend)
+router.route('/get-posts-index-show')
+  .get(postValidation.getPostsIndexShow, postController.getPostsIndexShow)
 router.route('/edit')
   .post(
     uploadMulter.array('files', 4),

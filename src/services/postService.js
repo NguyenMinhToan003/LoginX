@@ -57,14 +57,15 @@ const getPostByAuthorId = async ({authorId, userId}) => {
   }
 }
 
-const getPostsFriend = async (userId) => {
+const getPostsIndexShow = async (userId) => {
   try {
     const user = await userModel.findUserById(userId)
     if (!user) return { message: 'User not found' }
     const friends =await friendModel.findFriendsByUserId(userId)
     const friendsId = friends.map(friend => friend._id)
+    const ids = [userId, ...friendsId]
     let result = await postModel.findPostsByAuthorId(
-      { authorId: { $in: friendsId } })
+      { authorId: { $in: ids } })
     
     // add interaction 
     for (let i = 0; i < result.length; i++) {
@@ -82,7 +83,6 @@ const getPostsFriend = async (userId) => {
       const comments = await postCommentModel.findCommentsByPostId(post._id)
       result[i].coundComment = comments.length
       result[i].interactions = interactions
-
     }
     return result
   }
@@ -305,7 +305,7 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
 export const postService = {
   createPost,
   getPostByAuthorId,
-  getPostsFriend,
+  getPostsIndexShow,
   deletePost,
   commentPost,
   getComments,

@@ -28,7 +28,7 @@ const getPostByAuthorId = async (req, res, next) => {
   }
 }
 
-const getPostsFriend = async (req, res, next) => {
+const getPostsIndexShow = async (req, res, next) => {
   try {
     const schema = Joi.object({
       userId: Joi.string().required(),
@@ -191,7 +191,7 @@ const editPost = async (req, res, next) => {
 export const postValidation = {
   createPost,
   getPostByAuthorId,
-  getPostsFriend,
+  getPostsIndexShow,
   deletePost,
   commentPost,
   getComments,
