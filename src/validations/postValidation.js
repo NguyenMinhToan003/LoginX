@@ -114,7 +114,7 @@ const deleteComment = async (req, res, next) => {
 const searchPost = async (req, res, next) => {
   try {
     const schema = Joi.object({
-      title: Joi.string(),
+      content: Joi.string(),
     })
     await schema.validateAsync(req.query, { abortEarly: false });
     next();

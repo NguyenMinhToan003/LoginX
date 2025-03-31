@@ -98,8 +98,8 @@ const deleteComment = async (req, res) => {
 
 const searchPost = async (req, res) => {
   try {
-    const { title } = req.query
-    const result = await postService.searchPost({ title });
+    const { content } = req.query
+    const result = await postService.searchPost({ content });
     return res.status(200).json(result)
   }
   catch (error) {

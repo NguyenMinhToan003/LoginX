@@ -177,9 +177,9 @@ const deleteComment = async (commentId, authorId) => {
   }
 }
 
-const searchPost = async ({ title }) => {
+const searchPost = async ({ content }) => {
   try {
-    const result = await postModel.findPostByQuery({ title }) 
+    const result = await postModel.findPostByQuery({ content }) 
     for(let i = 0; i < result.length; i++) {
       const post = result[i]
       const interactions = await postInteractionModel.getInteractionByPostId(

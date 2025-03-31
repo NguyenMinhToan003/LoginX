@@ -78,6 +78,21 @@ const findInfoRoomChatById = async (roomId) => {
           foreignField: '_id',
           as: 'members'
         }
+      },
+      {
+        $project: {
+          '_id': 1,
+          'type': 1,
+          'info.name': 1,
+          'info.avartar': 1,
+          'info.admins._id': 1,
+          'info.admins.name': 1,
+          'info.admins.picture': 1,
+          'members._id': 1,
+          'members.name': 1,
+          'members.picture': 1,
+
+        }
       }
     ]).toArray()
     return rooms[0]
