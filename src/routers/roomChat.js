@@ -1,7 +1,7 @@
 import express from 'express'
-import { roomChatValidation } from '../validations/roomChatValidation.js';
-import { roomChatController } from '../controllers/roomChatController.js';
+import { roomChatController } from '~/controllers/roomChatController';
 import { uploadMulter } from '~/middleware/multer/multer.js';
+import { roomChatValidation } from '~/validations/roomChatValidation';
 
 
 

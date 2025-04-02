@@ -1,16 +1,15 @@
-import { userModel } from "~/models/userModel.js";
-import { roomChatModel } from "../models/roomChatModel.js"
-import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from "~/configs/cloudinary.js";
+import { userModel } from '~/models/userModel.js';
+import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from '~/configs/cloudinary.js';
+import { roomChatModel } from '~/models/roomchatModel';
+import { roomchatMembersModel } from '~/models/roomchat_membersModel.js';
+import { messageModel } from '~/models/messagesModel.js';
 
-const createRoom = async (type, name, file, admins, members) => {
+const createRoom = async (type, name, file, members, userId) => {
   try {
-    const uniqueAdmins = admins.filter(
-      (admin, index) => admins.indexOf(admin) === index);
-    members = [...members, ...uniqueAdmins]
     const uniqueMembers = members.filter(
       (member, index) => members.indexOf(member) === index);
     if (type === 'private' && uniqueMembers.length > 2)
-      return { message: "Private room only 2 members" }
+      return { message: 'Private room only 2 members' }
     const exitsRoom = await roomChatModel.findRoomPrivate(uniqueMembers)
     if (exitsRoom && type === 'private') return exitsRoom
     let avartar = [file]
@@ -18,8 +17,36 @@ const createRoom = async (type, name, file, admins, members) => {
     if (file.url !== 'empty') {
       avartar = await uploadFilesToCloudinary([file])
     }
-
-    return await roomChatModel.createRoom(type, name, avartar[0], uniqueAdmins, uniqueMembers)
+    // check userId exits
+    for (let i = 0; i < uniqueMembers.length; i++) {
+      const user = await userModel.findUserById(uniqueMembers[i])
+      if (!user) {
+        uniqueMembers.splice(i, 1)
+        i--
+      }
+    }
+    if (uniqueMembers.length === 0)
+      return { message: 'Member not exits' }
+    // create room
+    const room = await roomChatModel.createRoom(type, name, avartar[0])
+    if (room?.insertedId?.toString()!=='') {
+      // add member 
+      await roomchatMembersModel.bulkInsertRoomChatMembers(
+        room.insertedId.toString(),
+        uniqueMembers,
+        'member'
+      )
+      // add admin
+      await roomchatMembersModel.bulkInsertRoomChatMembers(
+        room.insertedId.toString(),
+        [userId],
+        'admin'
+      )
+    }
+    return {
+      ...room,
+      membersCount: uniqueMembers.length+1,
+    }
   }
   catch (error) {
     throw error
@@ -29,25 +56,34 @@ const findOrCreateRoomPrivate = async (userSeachId, userOrtherId) => {
   try {
     const userSearch = await userModel.findUserById(userSeachId)
     const userOrther = await userModel.findUserById(userOrtherId)
-    if (!userSearch || !userOrther) return { message: "User not found" }
+    if (!userSearch || !userOrther) return { message: 'User not found' }
     const members = [userSeachId, userOrtherId]
-    let exitsRoom = await roomChatModel.findRoomPrivate(members)
-    
+    let roomPrivateUserSearch =
+      await roomchatMembersModel.findRoomsPrivateByUserId(userSeachId)
+    let roomPrivateUserOrther =
+      await roomchatMembersModel.findRoomsPrivateByUserId(userOrtherId)
+    // kiem tra xem co room trung id khong 
+    let exitsRoom = roomPrivateUserSearch?.find(
+      roomSearch => roomPrivateUserOrther?.some(
+        roomOrther => roomOrther._id.toString() === roomSearch._id.toString()
+      )
+    )
     if (exitsRoom) {
-      exitsRoom.info.name = userOrther.name
-      exitsRoom.info.avartar = userOrther.picture
+      exitsRoom.name = userOrther.name
+      exitsRoom.avatar = userOrther.picture
       return exitsRoom
     }
-    return await roomChatModel.createRoom(
-      'private',
-      userSearch.name +'-'+ userOrther.name,
-      {
-        url: 'empty',
-        public_id: 'empty',
-        type: 'image'
-      },
-      members,
-      members)
+    else {
+      const room = await roomChatModel.createRoom('private', 'room-private', null)
+      if (room?.insertedId?.toString()!=='') {
+        await roomchatMembersModel.bulkInsertRoomChatMembers(
+          room.insertedId.toString(),
+          members,
+          'admin'
+        )
+      }
+      return room
+    }
   }
   catch (error) {
     throw error
@@ -55,13 +91,32 @@ const findOrCreateRoomPrivate = async (userSeachId, userOrtherId) => {
 }
 const joinRoom = async (roomId, members) => {
   try {
-    const room = await roomChatModel.findRoomById(roomId)
-    if (!room) return { message: "Room not found" }
-    const updateRoom = await roomChatModel.joinRoom(roomId, members)
-    return {
-      ...updateRoom,
-      message: "Join room success"
+    const room = await getRoom(roomId)
+    if (!room) return { message: 'Room not found' }
+    if(room.type === 'private') return { message: 'Action is not allow' }
+    const roomMemberIds = room.members.map(member => member._id.toString())
+    const uniqueMembers = members.filter(
+      (member, index) => members.indexOf(member) === index);
+    let newMembers = uniqueMembers.filter(
+      member => !roomMemberIds.includes(member)
+    )
+   
+    // loai bo userId khong ton tai
+    for (let i = 0; i < newMembers.length; i++) {
+      const user = await userModel.findUserById(newMembers[i])
+      if (!user) {
+        newMembers.splice(i, 1)
+        i--
+      }
     }
+    if (newMembers.length === 0)
+      return { message: 'Member already in room or userId not exits' }
+    const result = await roomchatMembersModel.bulkInsertRoomChatMembers(
+      roomId,
+      newMembers,
+      'member'
+    )
+    return result
   }
   catch (error) {
     throw error
@@ -70,7 +125,10 @@ const joinRoom = async (roomId, members) => {
 
 const getRoom = async (roomId) => {
   try {
-    return await roomChatModel.findInfoRoomChatById(roomId)
+    const room = await roomChatModel.findRoomById(roomId)
+    if (!room) return { message: 'Room not found' }
+    room.members = await roomchatMembersModel.findMembersInRoomChatId(roomId)
+    return room
   }
   catch (error) {
     throw error
@@ -78,10 +136,11 @@ const getRoom = async (roomId) => {
 }
 const getRoomChatByUserId = async (userId, type) => {
   try {
-
-    if (type !== null)
-      return await roomChatModel.findRoomChatByUserIdAndType(userId, type)
-    return await roomChatModel.findRoomChatByUserId(userId)
+    if (type == 'private')
+      return await roomchatMembersModel.findRoomsPrivateByUserId(userId)
+    if (type == 'group')
+      return await roomchatMembersModel.findRoomsGroupByUserId(userId)
+    return await roomchatMembersModel.findRoomsChatByUserId(userId)
   }
   catch (error) {
     throw error
@@ -90,16 +149,20 @@ const getRoomChatByUserId = async (userId, type) => {
 
 const deleteRoom = async (roomId, userId) => {
   try {
-    const room = await roomChatModel.findRoomById(roomId)
-    if (!room) return { message: "Room not found" }
-    if (room?.info?.admins.includes(userId)) {
-      const result = await roomChatModel.deleteRoom(roomId)
-      return {
-        ...result,
-        message: "Delete room success"
-      }
+    const room = await getRoom(roomId)
+    if (!room) return { message: 'Room not found' }
+    const isCheckAdmin = room?.members?.find(
+      member => member._id.toString() === userId && member.role === 'admin'
+    )
+    if (!isCheckAdmin) return { message: 'You are not admin' }
+    await roomchatMembersModel.deleteRoomChatMembersByRoomId(roomId)
+    if (room.avatar.url !== 'empty') {
+      await deleteFilesFromCloudinary([room.avatar])
     }
-    else return { message: "You are not admin" }
+    // delete messages in room
+    await messageModel.bulkDeleteMessageInRoom(roomId)
+    return await roomChatModel.deleteRoom(roomId)
+
   }
   catch (error) {
     throw error
@@ -108,66 +171,43 @@ const deleteRoom = async (roomId, userId) => {
 
 const leaveRoom = async (roomId, userId) => {
   try {
-    const room = await roomChatModel.findRoomById(roomId)
-    if (!room) return {
-      message: "Room not found",
-      code: -1
+    const room = await getRoom(roomId)
+    if (!room) return { message: 'Room not found' }
+    if (room.type === 'private') return { message: 'Action is not allow' }
+    const member = room.members.find(member => member._id === userId)
+    console.log(room.members)
+    if (!member) return { message: 'You are not member' }
+    if (member.role === 'admin') {
+      const admins = room.members.filter(member => member.role === 'admin')
+      if (admins.length <= 1) return { message: 'You are admin' }
     }
-    if (room?.info?.admins.length == 1 && room?.info?.admins[0] === userId)
-      return {
-        message: "You are admin, can't leave room",
-        code: -1
-      }
-    const result = await roomChatModel.leaveRoom(roomId, userId)
-    return {
-      ...result,
-      code: 0,
-      message: "action leave room"
-    }
+    return  await roomchatMembersModel.memberLeaveRoom(roomId, userId)
   }
   catch (error){
     throw error
   }
 }
 
-const updateInfoRoom = async (roomId, name, file, admins, userAction) => {
+const updateInfoRoom = async (roomId, name, file, userAction) => {
   try {
-    const room = await roomChatModel.findRoomById(roomId)
-    if (!room) return { message: "Room not found" }
-    if (!room.info.admins.includes(userAction))
-      return { message: "You are not admin" }
+    const room = await getRoom(roomId)
+    if (!room) return { message: 'Room not found' }
+    const userActionInRoom = room.members.find(
+      member => member._id.toString() === userAction
+    )
+    if (!userActionInRoom) return { message: 'You are not member' }
+    if(userActionInRoom.role !== 'admin')
+      return { message: 'You are not admin' }
 
-    const uniqueAdmins = admins.filter(
-      (admin, index) => admins.indexOf(admin) === index);
-
-    
-    const membersUpdate = [...room.members, ...uniqueAdmins]
-    const uniqueMembers = membersUpdate.filter(
-      (member, index) => membersUpdate.indexOf(member) === index);
-    // if (room.info.avartar.url !== 'empty') {
-      
-    // }
-   
-    let avartar = [file]
+    let avatar = [file]
     if (file.url !== 'empty') {
-      await deleteFilesFromCloudinary([room.info.avartar])
-      avartar = await uploadFilesToCloudinary([file])
+      await deleteFilesFromCloudinary([room.avatar])
+      avatar = await uploadFilesToCloudinary([file])
     }
     else {
-      avartar = [room.info.avartar]
+      avatar = [room.avatar]
     }
-    const result = await roomChatModel.updateInfoRoom(
-      room.type,
-      roomId,
-      name,
-      avartar[0],
-      uniqueAdmins,
-      uniqueMembers
-    )
-    return {
-      ...result,
-      message: "Update info room success"
-    }
+    return await roomChatModel.updateInfoRoom(roomId, name, avatar[0])
   }
   catch (error) {
     throw error

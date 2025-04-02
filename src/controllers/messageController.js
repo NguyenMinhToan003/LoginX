@@ -1,4 +1,7 @@
-import { messageService } from "../services/messageService.js"
+// import { messageService } from "~/services/messageService.js"
+
+import { messageService } from "~/services/messageService"
+
 
 const createMessage = async (req, res) => {
   try {

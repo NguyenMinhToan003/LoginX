@@ -147,12 +147,23 @@ const findMessageById = async (messageId) => {
   }
 }
 
-
+const bulkDeleteMessageInRoom = async (roomId) => {
+  try {
+    const collection = GET_DB().collection(MESSAGE_COLLECTION)
+    const bulkOperation = collection.initializeUnorderedBulkOp()
+    // remove all messages in room
+    return await bulkOperation.deleteMany({ roomId: roomId })
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const messageModel = {
   MESSAGE_COLLECTION,
   deleteMessage,
   createMessage,
   getAllMessage,
-  findMessageById
+  findMessageById,
+  bulkDeleteMessageInRoom
 }

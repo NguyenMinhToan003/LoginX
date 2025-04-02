@@ -5,7 +5,7 @@ const createRoom = async (req, res, next) => {
     const schema = Joi.object({
       type:Joi.string().required(),
       name:Joi.string().required(),
-      admins:Joi.array().items(Joi.string()).required().min(1),
+      userId:Joi.string().required(),
       members:Joi.array().items(Joi.string()).required().min(1),
     })
     await schema.validateAsync(req.body, { abortEarly: false })
@@ -101,7 +101,6 @@ const updateInfoRoom = async (req, res, next) => {
     const schema = Joi.object({
       roomId: Joi.string().required(),
       name: Joi.string().required(),
-      admins: Joi.array().items(Joi.string()).min(1).required(),
       userAction: Joi.string().required()
     })
     await schema.validateAsync(req.body, { abortEarly: false })

@@ -59,6 +59,7 @@ const START_SERVER = () => {
 
   // Sử dụng router
   app.use('/api', APIs_v1)
+  app.use('/api/v1', APIs_v1)
   app.route('/').get((req, res) => {
     res.json({
       message: 'Welcome to my server',

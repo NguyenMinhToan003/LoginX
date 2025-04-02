@@ -1,8 +1,9 @@
-import { roomChatService } from "../services/roomChatService.js"
+import { roomChatService } from "~/services/roomChatService.js"
+
 
 const createRoom = async (req, res) => {
   try {
-    const { type, name, admins, members } = req.body
+    const { type, name, members, userId } = req.body
     const files = req.files ? req.files : null
     let file = files?.length > 0 
       ? {
@@ -14,8 +15,7 @@ const createRoom = async (req, res) => {
         public_id: 'empty',
         type: 'empty'
       }
-
-    const result = await roomChatService.createRoom(type, name, file, admins, members)
+    const result = await roomChatService.createRoom(type, name, file, members, userId)
     return res.status(200).json(result)
   }
   catch (error) {
@@ -88,7 +88,7 @@ const leaveRoom = async (req, res) => {
 
 const updateInfoRoom = async (req, res) => {
   try {
-    const { roomId, name, admins, userAction } = req.body
+    const { roomId, name, userAction } = req.body
     const files = req.files ? req.files : null
     let file = files?.length > 0 
       ? {
@@ -104,7 +104,6 @@ const updateInfoRoom = async (req, res) => {
       roomId,
       name,
       file,
-      admins,
       userAction
     )
     return res.status(200).json(result)

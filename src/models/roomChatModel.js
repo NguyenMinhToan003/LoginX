@@ -1,38 +1,34 @@
 import Joi from 'joi'
 import { GET_DB } from '../configs/db.js'
 import { ObjectId } from 'mongodb'
-import { messageModel } from './messagesModel.js'
 
 const ROOMCHAT_COLLECTION = 'roomchats'
-const ROOMCHAT_SCHEMA = Joi.object({
+const ROOMCHATA_SCHEMA = Joi.object({
   type: Joi.string().valid('group', 'private').required(),
-  info: Joi.object({
-    name: Joi.string().optional(),
-    avartar: Joi.object({
-      url: Joi.string().default(null),
-      public_id: Joi.string().default(null),
-      type: Joi.string().default(null),
-      name: Joi.string().default(null),
-    }),
-    admins: Joi.array().items(Joi.string()).optional()
+  name: Joi.string().optional(),
+  avatar: Joi.object({
+    url: Joi.string().default(null),
+    public_id: Joi.string().default(null),
+    type: Joi.string().default(null),
+    name: Joi.string().default(null),
   }),
-  members: Joi.array().items(Joi.string()).min(1).required(),
+  detail: Joi.string().default(null),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null),
 })
 
-const createRoom = async (type, name, avartar, admins, members) => {
+const createRoom = async (type, name, avatar) => {
   try {
-    let data = {
-      type,
-      info: {
-        name,
-        avartar,
-        admins,
-      },
-      members,
+    
+    if (avatar === null) {
+      avatar = {
+        url: 'empty',
+        public_id: 'empty',
+        type: 'empty',
+      }
     }
-    data = await ROOMCHAT_SCHEMA.validateAsync(data, { abortEarly: false })
+    let data = { type, name, avatar }
+    data = await ROOMCHATA_SCHEMA.validateAsync(data, { abortEarly: false })
     return await GET_DB().collection(ROOMCHAT_COLLECTION).insertOne(data)
   }
   catch (error) {
@@ -47,96 +43,14 @@ const findRoomById = async (roomId) => {
     throw error
   }
 }
-const joinRoom = async (roomId, members) => {
-  try {
-    return await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
-      { _id: new ObjectId(roomId) },
-      { $addToSet: { members: { $each: members } } }
-    )
-  }
-  catch (error) {
-    throw error
-  }
-}
 
-const findInfoRoomChatById = async (roomId) => {
-  try {
-    const rooms = await GET_DB().collection(ROOMCHAT_COLLECTION).aggregate([
-      { $match: { _id: new ObjectId(roomId) } },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'info.admins',
-          foreignField: '_id',
-          as: 'info.admins'
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'members',
-          foreignField: '_id',
-          as: 'members'
-        }
-      },
-      {
-        $project: {
-          '_id': 1,
-          'type': 1,
-          'info.name': 1,
-          'info.avartar': 1,
-          'info.admins._id': 1,
-          'info.admins.name': 1,
-          'info.admins.picture': 1,
-          'members._id': 1,
-          'members.name': 1,
-          'members.picture': 1,
-
-        }
-      }
-    ]).toArray()
-    return rooms[0]
-    
-  }
-  catch (error) {
-    throw error
-  }
-}
 const findRoomChatByUserId = async (userId)=>{
-  try {
-    const rooms = GET_DB().collection(ROOMCHAT_COLLECTION).aggregate(
-      { members: { $in: [userId] } },
-      {
-        $sort: {
-          createdAt: -1
-        }
-      },
-    ).toArray()
-    return rooms
-
-  }
-  catch (error) {
-    throw error
-  }
-}
-
-const findRoomChatByUserIdAndType = async (userId, type) => {
-  try {
-    const rooms = GET_DB().collection(ROOMCHAT_COLLECTION).find(
-      { members: { $in: [userId] }, type: type },
-    ).toArray()
-    return rooms
-  }
-  catch (error) {
-    throw error
-  }
+  
 }
 
 const deleteRoom = async (roomId) => {
   try {
-    const deleteMessage = await GET_DB().collection(messageModel.MESSAGE_COLLECTION).deleteMany({ roomId: roomId })
-    const result = await GET_DB().collection(ROOMCHAT_COLLECTION).deleteOne({ _id: new ObjectId(roomId) })
-    return result
+    return await GET_DB().collection(ROOMCHAT_COLLECTION).deleteOne({ _id: new ObjectId(roomId) })
   }
   catch (error) {
     throw error
@@ -144,38 +58,20 @@ const deleteRoom = async (roomId) => {
 }
 
 const leaveRoom = async (roomId, userId) => {
-  try {
-    const result = await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
-      { _id: new ObjectId(roomId) },
-      { $pull: { members: userId } }
-    )
-    return result
-  }
-  catch (error) {
-    throw error
-  }
 }
 
-const updateInfoRoom = async (type,roomId, name, avartar, admins, membersUpdate) => {
+const updateInfoRoom = async (roomId, name, avatar) => {
   try {
-    let data = {
-      type,
-      info: {
-        name,
-        avartar,
-        admins,
-      },
-      members: membersUpdate,
-      updatedAt: Date.now()
-    }
-    data = await ROOMCHAT_SCHEMA.validateAsync(data, { abortEarly: false })
-    const result = await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
+    return await GET_DB().collection(ROOMCHAT_COLLECTION).updateOne(
       { _id: new ObjectId(roomId) },
       {
-        $set: data
+        $set: {
+          name,
+          avatar,
+          updatedAt: Date.now(),
+        },
       }
     )
-    return result
   }
   catch (error) {
     throw error
@@ -183,28 +79,17 @@ const updateInfoRoom = async (type,roomId, name, avartar, admins, membersUpdate)
 }
 
 const findRoomPrivate = async (members) => {
-  try {
-    return await GET_DB().collection(ROOMCHAT_COLLECTION).findOne({
-      type: 'private',
-      members: { $all: members }
-    })
-  }
-  catch (error) {
-    throw error
-  }
+  
 }
 
 export const roomChatModel = {
   ROOMCHAT_COLLECTION,
-  ROOMCHAT_SCHEMA,
+  ROOMCHATA_SCHEMA,
   createRoom,
   findRoomPrivate,
   findRoomById,
-  joinRoom,
   deleteRoom,
-  findInfoRoomChatById,
   findRoomChatByUserId,
-  findRoomChatByUserIdAndType,
   leaveRoom,
-  updateInfoRoom
+  updateInfoRoom,
 }

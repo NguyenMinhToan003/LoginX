@@ -22,7 +22,6 @@ export const uploadFilesToCloudinary = async (files) => {
         folder: 'CHAT_LOGIN_X',
         resource_type: 'auto'
       })
-      console.log('result upload cloundinary :', result)
       uploadedFiles.push({
         url: result.secure_url,
         public_id: result.public_id,
