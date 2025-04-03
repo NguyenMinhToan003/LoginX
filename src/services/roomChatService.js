@@ -7,9 +7,9 @@ import { roomChatModel } from '~/models/roomChatModel';
 
 const createRoom = async (type, name, file, members, userId) => {
   try {
-    if(type==='private') return { message: 'Action is not allow' }
+    if (type === 'private') return { message: 'Action is not allow' }
     const uniqueMembers = members.filter(
-      (member, index) => members.indexOf(member) === index);
+      (member, index) => members.indexOf(member) === index && member !== userId);
     let avartar = [file]
 
     if (file.url !== 'empty') {
@@ -134,11 +134,18 @@ const getRoom = async (roomId) => {
 }
 const getRoomChatByUserId = async (userId, type) => {
   try {
+    let rooms = []
     if (type == 'private')
-      return await roomchatMembersModel.findRoomsPrivateByUserId(userId)
+      rooms= await roomchatMembersModel.findRoomsPrivateByUserId(userId)
     if (type == 'group')
-      return await roomchatMembersModel.findRoomsGroupByUserId(userId)
-    return await roomchatMembersModel.findRoomsChatByUserId(userId)
+      rooms= await roomchatMembersModel.findRoomsGroupByUserId(userId)
+    rooms = await roomchatMembersModel.findRoomsChatByUserId(userId)
+    // add lastMessage to room
+    for (let i = 0; i < rooms.length; i++) {
+      const lastMessage = await messageModel.getLastMessageInRoom(rooms[i]._id.toString())
+      rooms[i].lastMessage = lastMessage
+    }
+    return rooms
   }
   catch (error) {
     throw error

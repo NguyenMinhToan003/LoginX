@@ -159,11 +159,43 @@ const bulkDeleteMessageInRoom = async (roomId) => {
   }
 }
 
+const getLastMessageInRoom = async (roomId) => {
+  try {
+    const lastMessage = await GET_DB().collection(MESSAGE_COLLECTION).aggregate([
+      { $match: { roomId: roomId } },
+      { $sort: { createdAt: -1 } },
+      {
+        $lookup: {
+          from: userModel.USER_COLLECTION,
+          localField: 'sender',
+          foreignField: '_id',
+          as: 'sender'
+        }
+      },
+      { $unwind: '$sender' },
+      {
+        $project: {
+          'username': '$sender.name',
+          'picture': '$sender.picture.url',
+          'content': 1,
+          'status': 1,
+        }
+      },
+      { $limit: 1 }
+    ]).toArray()
+    return lastMessage[0]
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const messageModel = {
   MESSAGE_COLLECTION,
   deleteMessage,
   createMessage,
   getAllMessage,
   findMessageById,
-  bulkDeleteMessageInRoom
+  bulkDeleteMessageInRoom,
+  getLastMessageInRoom
 }

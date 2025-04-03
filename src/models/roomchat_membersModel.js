@@ -88,6 +88,9 @@ const findRoomsPrivateByUserId = async (userId) => {
         $unwind: '$room'
       },
       {
+        $sort:{ createdAt: -1 }
+      },
+      {
         $match: { 'room.type': 'private' }
       },
       {
@@ -149,6 +152,9 @@ const findRoomsGroupByUserId = async (userId) => {
         $unwind: '$room'
       },
       {
+        $sort:{ createdAt: -1 }
+      },
+      {
         $match: { 'room.type': 'group' }
       },
       {
@@ -178,6 +184,9 @@ const findRoomsChatByUserId = async (userId) => {
       },
       {
         $unwind: '$room'
+      },
+      {
+        $sort:{ createdAt: -1 }
       },
       {
         $project: {
