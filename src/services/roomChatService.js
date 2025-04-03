@@ -7,10 +7,9 @@ import { roomChatModel } from '~/models/roomChatModel';
 
 const createRoom = async (type, name, file, members, userId) => {
   try {
+    if(type==='private') return { message: 'Action is not allow' }
     const uniqueMembers = members.filter(
       (member, index) => members.indexOf(member) === index);
-
-    if (exitsRoom && type === 'private') return exitsRoom
     let avartar = [file]
 
     if (file.url !== 'empty') {
