@@ -175,7 +175,7 @@ const leaveRoom = async (roomId, userId) => {
     if (!room) return { message: 'Room not found' }
     if (room.type === 'private') return { message: 'Action is not allow' }
     const member = room.members.find(member => member._id === userId)
-    console.log(room.members)
+
     if (!member) return { message: 'You are not member' }
     if (member.role === 'admin') {
       const admins = room.members.filter(member => member.role === 'admin')

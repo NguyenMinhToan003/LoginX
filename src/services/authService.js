@@ -6,7 +6,6 @@ const loginWithTwitter = async (user) => {
   try {
    
     const result = await userModel.findUserByIdSocial(user.id)
-    console.log(result)
     if(result) {
       return result
     }
@@ -32,7 +31,6 @@ const loginWithTwitter = async (user) => {
 const loginWithGithub = async (user) => {
     try {
       const result = await userModel.findUserByIdSocial(user.id)
-      console.log(result)
     if(result) {
       return result
     }

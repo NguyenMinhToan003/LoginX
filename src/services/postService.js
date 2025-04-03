@@ -279,9 +279,9 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
     if (post.authorId !== authorId) return { message: 'Unauthorized' }
     const uploadCloudinary = await uploadFilesToCloudinary(assets)
 
-    console.log('deleteFiles', deleteFiles)
+
     const deleteInCloundinary = await deleteFilesFromCloudinary(deleteFiles)
-    console.log(deleteInCloundinary)
+
     const postAssets = post.assets.filter(asset => !deleteFiles.includes(
       file=> file.public_id === asset.public_id
     ))
@@ -291,7 +291,7 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
       assets: [...postAssets, ...uploadCloudinary]
     }
     const result = await postModel.updatePost(postId, data)
-    console.log(result)
+
     return {
       ...result,
       message: 'action edit post'
