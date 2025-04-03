@@ -9,9 +9,7 @@ const createRoom = async (type, name, file, members, userId) => {
   try {
     const uniqueMembers = members.filter(
       (member, index) => members.indexOf(member) === index);
-    if (type === 'private' && uniqueMembers.length > 2)
-      return { message: 'Private room only 2 members' }
-    const exitsRoom = await roomChatModel.findRoomPrivate(uniqueMembers)
+
     if (exitsRoom && type === 'private') return exitsRoom
     let avartar = [file]
 

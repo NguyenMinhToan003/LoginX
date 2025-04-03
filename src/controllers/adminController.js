@@ -64,9 +64,21 @@ const getReportPosts = async (req, res) => {
     return res.status(400).json({ message: error.message })
   }
 }
+
+const getReportPostId = async (req, res) => {
+  try {
+    const { postId } = req.query
+    
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const adminController = {
   getReportPosts,
   setStatusAccount,
   createAccountAdmin,
-  login
+  login,
+  getReportPostId
 }

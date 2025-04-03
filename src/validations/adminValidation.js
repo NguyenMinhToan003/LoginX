@@ -56,9 +56,23 @@ const getReportPosts = async (req, res, next) => {
   }
 }
 
+const getReportPostId = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      postId: Joi.string().required(),
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 export const adminValidation = {
   setStatusAccount,
   createAccountAdmin,
   login,
-  getReportPosts
+  getReportPosts,
+  getReportPostId
 }

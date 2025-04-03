@@ -15,5 +15,7 @@ router.route('/create-accout-admin')
 router.route('/login')
   .post(adminValidation.login, adminController.login)
 router.route('/get-report-posts')
-  .get(adminValidation.getReportPosts,adminController.getReportPosts)
+  .get(adminValidation.getReportPosts, adminController.getReportPosts)
+router.route('/get-report-postId')
+  .get(adminValidation.getReportPostId, adminController.getReportPostId)
 export const adminRouter = router
