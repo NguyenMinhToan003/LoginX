@@ -37,4 +37,7 @@ router.route('/uninteraction')
   .post(postValidation.uninteractionPost, postController.uninteractionPost)
 router.route('/search')
   .get(postValidation.searchPost, postController.searchPost)
+
+router.route('/report')
+  .post(postValidation.reportPost, postController.reportPost)
 export const postRouter = router

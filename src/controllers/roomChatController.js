@@ -113,6 +113,8 @@ const updateInfoRoom = async (req, res) => {
   }
 }
 
+
+
 export const roomChatController = {
   createRoom,
   findOrCreateRoomPrivate,
@@ -121,5 +123,5 @@ export const roomChatController = {
   deleteRoom,
   getRoomChatByUserId,
   leaveRoom,
-  updateInfoRoom
+  updateInfoRoom,
 }

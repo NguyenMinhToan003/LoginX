@@ -5,12 +5,14 @@ import { postCommentModel } from '~/models/post_commentModel';
 import { postInteractionModel } from '~/models/post_interactionsModel';
 import { ObjectId } from 'mongodb';
 import { friendModel } from '~/models/friendModel';
+import { postReportModel } from '~/models/post_reportModel';
 
 const createPost = async ({content, authorId, assets }) => {
   try {
     const author = await userModel.findUserById(authorId)
     if (!author) return { message: 'Author not found' }
-
+    console.log(author)
+    if(author?.statusAccount === 'BLOCK') return { message: 'Your account has been blocked' }
     const uploadCloudinary = await uploadFilesToCloudinary(assets)
 
     const data = {
@@ -278,10 +280,7 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
     if (!post) return { message: 'Post not found' }
     if (post.authorId !== authorId) return { message: 'Unauthorized' }
     const uploadCloudinary = await uploadFilesToCloudinary(assets)
-
-
-    const deleteInCloundinary = await deleteFilesFromCloudinary(deleteFiles)
-
+    await deleteFilesFromCloudinary(deleteFiles)
     const postAssets = post.assets.filter(asset => !deleteFiles.includes(
       file=> file.public_id === asset.public_id
     ))
@@ -301,6 +300,18 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
     throw error
   }
 }
+const reportPost = async (postId, userId, type,reason) => {
+  try {
+    const post = await postModel.findPostById(postId)
+    if (!post) return { message: 'Post not found' }
+    const user = await userModel.findUserById(userId)
+    if (!user) return { message: 'User not found' }
+    return await postReportModel.createPostBlock(postId,userId,type,reason)
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const postService = {
   createPost,
@@ -315,5 +326,6 @@ export const postService = {
   interactionPost,
   uninteractionPost,
   getPostById,
-  editPost
+  editPost,
+  reportPost
 }

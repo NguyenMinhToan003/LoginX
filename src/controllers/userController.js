@@ -125,6 +125,7 @@ const editUser = async (req, res) => {
       address,
       userName,
       background,
+      
       link,
       bio,
       history
@@ -140,6 +141,7 @@ const editUser = async (req, res) => {
         public_id: 'empty',
         type: 'empty'
       }
+    console.log(req.files)
     const user = await userService.editUser(
       userId, {
         name,

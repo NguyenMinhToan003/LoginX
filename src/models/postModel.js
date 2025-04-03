@@ -1,6 +1,8 @@
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
 import { GET_DB } from '~/configs/db';
+import { userModel } from './userModel';
+import { postBlockModel } from './post_reportModel';
 
 const POST_COLLECTION = 'posts';
 const POST_SCHEMA = Joi.object({
@@ -12,6 +14,7 @@ const POST_SCHEMA = Joi.object({
     name: Joi.string(),
   })).max(10).min(0).default([]),
   embedId: Joi.string().default(null),
+  isBlock: Joi.boolean().default(false),
   authorId: Joi.string().required(),
   createdAt: Joi.date().default(Date.now()),
   updatedAt: Joi.date().default(null),
@@ -34,7 +37,7 @@ const findPostsByAuthorId = async (query) => {
       { $match: query },
       {
         $lookup: {
-          from: 'users',
+          from: userModel.USER_COLLECTION,
           localField: 'authorId',
           foreignField: '_id',
           as: 'author'

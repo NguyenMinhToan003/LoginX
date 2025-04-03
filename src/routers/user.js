@@ -12,7 +12,7 @@ router.route('/get-user-by-id')
   .get(userValidation.getUserById, userController.getUserById)
 router.route('/edit')
   .post(
-    uploadMulter.array('files',1),
+    uploadMulter.array('files', 1),
     userValidation.editUser,
     userController.editUser
   )

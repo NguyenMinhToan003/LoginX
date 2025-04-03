@@ -11,6 +11,7 @@ export const userSchema = Joi.object({
     type: Joi.string().default(null),
     name: Joi.string().default(null),
   }),
+  statusAccount: Joi.string().default('default').valid('DEFAULT','BLOCK'),
   typeAccount: Joi.string().required().valid('local', 'twitter','github','google'),
   password: Joi.string().default(null),
   email: Joi.string().email().default(null),
@@ -47,7 +48,11 @@ const createUser = async (user) => {
 }
 const findAllUser = async () => {
   try {
-    const users = await GET_DB().collection(USER_COLLECTION).find({}).toArray()
+    const users = await GET_DB().collection(USER_COLLECTION).aggregate([
+      { $match: {} },
+      { $project: { password: 0 } },
+      { $sort: { createdAt: -1 } }
+    ]).toArray()
     return users
   } catch (error) {
     throw error

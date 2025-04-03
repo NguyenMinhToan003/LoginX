@@ -187,6 +187,21 @@ const editPost = async (req, res, next) => {
     return res.status(400).json({ error: error.message });
   }
 }
+const reportPost = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      postId: Joi.string().required(),
+      userId: Joi.string().required(),
+      type: Joi.string().valid('SPAM', 'INAPPROPRIATE', 'FAKE','ORTHER').required(),
+      reason: Joi.string(),
+    })
+    await schema.validateAsync(req.body, { abortEarly: false });
+    next();
+  }
+  catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
 
 export const postValidation = {
   createPost,
@@ -201,5 +216,6 @@ export const postValidation = {
   interactionPost,
   uninteractionPost,
   getPostById,
-  editPost
+  editPost,
+  reportPost
 }

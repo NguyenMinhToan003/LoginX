@@ -156,6 +156,16 @@ const editPost = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 }
+const reportPost = async (req, res) => {
+  try {
+    const { postId, userId, type,reason } = req.body
+    const result = await postService.reportPost(postId, userId, type,reason)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
 
 export const postController = {
   createPost,
@@ -170,5 +180,6 @@ export const postController = {
   interactionPost,
   uninteractionPost,
   getPostById,
-  editPost
+  editPost,
+  reportPost
 }

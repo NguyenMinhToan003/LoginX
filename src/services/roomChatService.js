@@ -4,6 +4,7 @@ import { roomchatMembersModel } from '~/models/roomchat_membersModel.js';
 import { messageModel } from '~/models/messagesModel.js';
 import { roomChatModel } from '~/models/roomChatModel';
 
+
 const createRoom = async (type, name, file, members, userId) => {
   try {
     const uniqueMembers = members.filter(
@@ -214,6 +215,7 @@ const updateInfoRoom = async (roomId, name, file, userAction) => {
   }
 }
 
+
 export const roomChatService = {
   createRoom,
   findOrCreateRoomPrivate,
@@ -222,5 +224,5 @@ export const roomChatService = {
   deleteRoom,
   getRoomChatByUserId,
   leaveRoom,
-  updateInfoRoom
+  updateInfoRoom,
 }
