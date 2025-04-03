@@ -1,8 +1,8 @@
-import { userModel } from '~/models/userModel.js';
 import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from '~/configs/cloudinary.js';
-import { roomChatModel } from '~/models/roomchatModel.js';
+import { userModel } from '~/models/userModel.js';
 import { roomchatMembersModel } from '~/models/roomchat_membersModel.js';
 import { messageModel } from '~/models/messagesModel.js';
+import { roomChatModel } from '~/models/roomChatModel';
 
 const createRoom = async (type, name, file, members, userId) => {
   try {

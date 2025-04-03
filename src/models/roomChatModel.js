@@ -44,9 +44,6 @@ const findRoomById = async (roomId) => {
   }
 }
 
-const findRoomChatByUserId = async (userId)=>{
-  
-}
 
 const deleteRoom = async (roomId) => {
   try {
@@ -78,18 +75,14 @@ const updateInfoRoom = async (roomId, name, avatar) => {
   }
 }
 
-const findRoomPrivate = async (members) => {
-  
-}
+
 
 export const roomChatModel = {
   ROOMCHAT_COLLECTION,
   ROOMCHATA_SCHEMA,
   createRoom,
-  findRoomPrivate,
   findRoomById,
   deleteRoom,
-  findRoomChatByUserId,
   leaveRoom,
   updateInfoRoom,
 }
