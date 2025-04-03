@@ -69,9 +69,26 @@ const deleteMessage = async (userId, messageId) => {
   }
 }
 
+const bulkDeleteMessageInRoom = async (roomId) => {
+  try {
+    const messages = await messageModel.getAllMessage(roomId)
+    for(let i = 0; i < messages.length; i++) {
+      const message = messages[i]
+      if (message?.images.length > 0) {
+        await deleteFilesFromCloudinary(message.images)
+      }
+    }
+    const result = await messageModel.bulkDeleteMessageInRoom(roomId)
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const messageService = {
   createMessage,
   getAllMessage,
   deleteMessage,
+  bulkDeleteMessageInRoom
 }

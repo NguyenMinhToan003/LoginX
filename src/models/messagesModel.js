@@ -149,15 +149,14 @@ const findMessageById = async (messageId) => {
 
 const bulkDeleteMessageInRoom = async (roomId) => {
   try {
-    const collection = GET_DB().collection(MESSAGE_COLLECTION)
-    const bulkOperation = collection.initializeUnorderedBulkOp()
-    // remove all messages in room
-    return await bulkOperation.deleteMany({ roomId: roomId })
+    const collection = GET_DB().collection(MESSAGE_COLLECTION);
+    const result = await collection.deleteMany({ roomId: roomId });
+    return result; // Trả về kết quả của deleteMany
+  } catch (error) {
+    throw error;
   }
-  catch (error) {
-    throw error
-  }
-}
+};
+
 
 const getLastMessageInRoom = async (roomId) => {
   try {

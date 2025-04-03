@@ -3,6 +3,7 @@ import { userModel } from '~/models/userModel.js';
 import { roomchatMembersModel } from '~/models/roomchat_membersModel.js';
 import { messageModel } from '~/models/messagesModel.js';
 import { roomChatModel } from '~/models/roomChatModel';
+import { messageService } from './messageService';
 
 
 const createRoom = async (type, name, file, members, userId) => {
@@ -165,7 +166,7 @@ const deleteRoom = async (roomId, userId) => {
       await deleteFilesFromCloudinary([room.avatar])
     }
     // delete messages in room
-    await messageModel.bulkDeleteMessageInRoom(roomId)
+    await messageService.bulkDeleteMessageInRoom(roomId)
     return await roomChatModel.deleteRoom(roomId)
 
   }
