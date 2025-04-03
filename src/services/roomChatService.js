@@ -137,9 +137,9 @@ const getRoomChatByUserId = async (userId, type) => {
     let rooms = []
     if (type == 'private')
       rooms= await roomchatMembersModel.findRoomsPrivateByUserId(userId)
-    if (type == 'group')
+    else if (type == 'group')
       rooms= await roomchatMembersModel.findRoomsGroupByUserId(userId)
-    rooms = await roomchatMembersModel.findRoomsChatByUserId(userId)
+    else rooms = await roomchatMembersModel.findRoomsChatByUserId(userId)
     // add lastMessage to room
     for (let i = 0; i < rooms.length; i++) {
       const lastMessage = await messageModel.getLastMessageInRoom(rooms[i]._id.toString())
@@ -201,8 +201,8 @@ const updateInfoRoom = async (roomId, name, file, userAction) => {
       member => member._id.toString() === userAction
     )
     if (!userActionInRoom) return { message: 'You are not member' }
-    if(userActionInRoom.role !== 'admin')
-      return { message: 'You are not admin' }
+    // if(userActionInRoom.role !== 'admin')
+    //   return { message: 'You are not admin' }
 
     let avatar = [file]
     if (file.url !== 'empty') {
