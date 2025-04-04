@@ -136,21 +136,36 @@ const getUserById = async (userId) => {
 
 const editUser = async (userId, data) => {
   try {
-    const user = await userModel.findUserById(userId)
+    
+    let user = await userModel.findUserById(userId)
+    
     if (!user) return { message: 'User not found' }
-    data.updatedAt = Date.now()
+    user.updatedAt = Date.now()
     if (data.picture.url!=='empty')  {
-      await deleteFilesFromCloudinary([user.picture])
+      user?.picture && await deleteFilesFromCloudinary([user?.picture])
       data.picture = await uploadFilesToCloudinary([data.picture])
-      data.picture = data.picture[0]// lay ra phan tu dau tien
+      user.picture = data.picture[0]// lay ra phan tu dau tien
     }
-    else {
-      data.picture = user.picture
-    }
-    data.typeAccount = user.typeAccount
-    data.idSocial = user.idSocial
-    data.password = user.password
-    const result = await userModel.editUser(userId, data)
+    // cap nhat cac truong khong thay doi vao data neu data khong co
+    const notChangeFields = [
+      'picture',
+      'typeAccount',
+      'idSocial',
+      'password',
+      'statusAccount'
+    ]
+    Object.keys(data).forEach((key) => {
+      // chi cap nhat cac truong khong co trong notChangeFields
+      // va khong co undefined trong data
+      if (!notChangeFields.includes(key) && data[key] !== undefined) {
+        console.log(key)
+        user[key] = data[key]
+      }
+    })
+    delete user._id // xoa id cu di de khong bi trung lap khi update
+    delete user.createdAt // xoa createdAt di de khong bi trung lap khi update
+    console.log(user)
+    const result = await userModel.editUser(userId, user)
     return result
   }
   catch (error) {

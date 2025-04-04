@@ -31,8 +31,11 @@ const createPost = async (data) => {
   }
 }
 
-const findPostsByAuthorId = async (query) => {
+const findPostsByAuthorId = async (query, page, limit) => {
   try {
+    page = parseInt(page) || 1
+    limit = parseInt(limit) || 10
+    const skip = (page - 1) * limit
     const result = await GET_DB().collection(POST_COLLECTION).aggregate([
       { $match: query },
       {

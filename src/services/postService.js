@@ -31,9 +31,9 @@ const createPost = async ({content, authorId, assets }) => {
   }
 }
 
-const getPostByAuthorId = async ({authorId, userId}) => {
+const getPostByAuthorId = async ({authorId, userId, page, limit}) => {
   try {
-    const result = await postModel.findPostsByAuthorId({ authorId })
+    const result = await postModel.findPostsByAuthorId({ authorId }, page, limit)
     // add interaction
     for (let i = 0; i < result.length; i++) {
       const post = result[i]

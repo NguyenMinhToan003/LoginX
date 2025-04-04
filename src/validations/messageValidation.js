@@ -30,6 +30,24 @@ const getAllMessage = async (req, res, next) => {
     return res.status(400).json({ message: error.message })
   }
 }
+
+const getPaginateMessage = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      page: Joi.number(),
+      limit: Joi.number(),
+      roomId: Joi.string().required(),
+      userId: Joi.string().required(),
+
+    })
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
+
 const deleteMessage = async (req, res, next) => {
   try {
     const schema = Joi.object({
@@ -65,4 +83,5 @@ export const messageValidation = {
   getAllMessage,
   deleteMessage,
   repMessage,
+  getPaginateMessage
 }

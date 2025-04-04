@@ -17,6 +17,8 @@ const createPost = async (req, res, next) => {
 const getPostByAuthorId = async (req, res, next) => {
   try {
     const schema = Joi.object({
+      page: Joi.number(),
+      limit: Joi.number(),
       authorId: Joi.string().required(),
       userId: Joi.string()
     })

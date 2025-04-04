@@ -32,8 +32,4 @@ router.route('/unfriend')
   .post(userValidation.unfriend, userController.unfriend)
 router.route('/search')
   .get(userValidation.searchUser, userController.searchUser)
-
-
-
-
 export const userRouter = router;

@@ -68,7 +68,8 @@ const getReportPosts = async (req, res) => {
 const getReportPostId = async (req, res) => {
   try {
     const { postId } = req.query
-    
+    const result = await adminService.getReportPostId({ postId })
+    return res.status(200).json(result)
   }
   catch (error) {
     return res.status(400).json({ message: error.message })

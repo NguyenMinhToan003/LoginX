@@ -1,8 +1,4 @@
-// import { messageService } from "~/services/messageService.js"
-
 import { messageService } from "~/services/messageService"
-
-
 const createMessage = async (req, res) => {
   try {
     const { roomId, sender, content, followMessageId, embedPostId=null} = req.body
@@ -28,7 +24,7 @@ const createMessage = async (req, res) => {
 
 const getAllMessage = async (req, res) => {
   try {
-    const { roomId, userId } = req.body
+    const { roomId, userId} = req.body
     const result = await messageService.getAllMessage(roomId, userId)
     return res.status(200).json(result)
   }
@@ -47,13 +43,10 @@ const deleteMessage = async (req, res) => {
     return res.status(400).json({ message: error.message })
   }
 }
-
-const repMessage = async (req, res) => {
+const getPaginateMessage = async (req, res) => {
   try {
-    const { messageId, authorId, content, followMessageId } = req.body
-    const result = await messageService.repMessage(
-      {messageId, authorId, content, followMessageId}
-    )
+    const { roomId, userId, page, limit } = req.body
+    const result = await messageService.getPaginateMessage(roomId, userId, page, limit )
     return res.status(200).json(result)
   }
   catch (error) {
@@ -61,11 +54,9 @@ const repMessage = async (req, res) => {
   }
 }
 
-
-
 export const messageController = {
   createMessage,
   getAllMessage,
   deleteMessage,
-  repMessage,
+  getPaginateMessage
 }

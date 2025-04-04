@@ -21,8 +21,8 @@ const createPost = async (req, res) => {
 
 const getPostByAuthorId = async (req, res) => {
   try {
-    const { authorId, userId } = req.query
-    const result = await postService.getPostByAuthorId({ authorId, userId });
+    const { authorId, userId, page, limit } = req.query
+    const result = await postService.getPostByAuthorId({ authorId, userId, page, limit });
     return res.status(200).json(result);
   }
   catch (error) {

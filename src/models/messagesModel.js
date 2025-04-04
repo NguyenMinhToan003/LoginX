@@ -127,6 +127,8 @@ const deleteMessage = async (messageId) => {
           status: 'delete',
           images: [],
           content: 'This message has been deleted',
+          embedPostId: null,
+          followMessageId: null,
           updatedAt: Date.now()
         }
       }
@@ -189,6 +191,108 @@ const getLastMessageInRoom = async (roomId) => {
   }
 }
 
+const getPaginatedMessages = async (roomId, page, limit) => {
+  try {
+    limit = parseInt(limit) || 30;
+    page = parseInt(page) || 1;
+    const skip = (page - 1) * limit;
+    const data = await GET_DB()
+      .collection(MESSAGE_COLLECTION)
+      .aggregate([
+        { $match: { roomId: roomId } },
+        {
+          $lookup: {
+            from: userModel.USER_COLLECTION,
+            localField: 'sender',
+            foreignField: '_id',
+            as: 'sender',
+          },
+        },
+        { $unwind: '$sender' },
+        {
+          $lookup: {
+            from: MESSAGE_COLLECTION,
+            localField: 'followMessageId',
+            foreignField: '_id',
+            as: 'followedMessage',
+          },
+        },
+        { $unwind: { path: '$followedMessage', preserveNullAndEmptyArrays: true } },
+        {
+          $lookup: {
+            from: postModel.POST_COLLECTION,
+            localField: 'embedPostId',
+            foreignField: '_id',
+            as: 'embedPost',
+          },
+        },
+        { $unwind: { path: '$embedPost', preserveNullAndEmptyArrays: true } },
+        {
+          $lookup: {
+            from: userModel.USER_COLLECTION,
+            localField: 'embedPost.authorId',
+            foreignField: '_id',
+            as: 'embedPost.author',
+          },
+        },
+
+        { $unwind: { path: '$embedPost.author', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            'sender._id': 1,
+            'sender.name': 1,
+            'sender.picture': 1,
+            content: 1,
+            status: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            images: 1,
+            'followedMessage.images': 1,
+            'followedMessage._id': 1,
+            'followedMessage.content': 1,
+            'followedMessage.sender': 1,
+            'embedPost._id': 1,
+            'embedPost.content': 1,
+            'embedPost.assets': 1,
+            'embedPost.author._id': 1,
+            'embedPost.author.name': 1,
+            'embedPost.author.picture': 1,
+          },
+        },
+      ])
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    const totalDocs = await GET_DB()
+      .collection(MESSAGE_COLLECTION)
+      .countDocuments({ roomId: roomId });
+    const totalPages = Math.ceil(totalDocs / limit);
+
+    return {
+      messages: data,
+      page: page,
+      limit: limit,
+      totalPage: totalPages,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
+const getTotalPageMessagePaginateInRoom = async (roomId,limit) => {
+  try {
+    limit = parseInt(limit) || 10
+    const totalDocs =
+      await GET_DB().collection(MESSAGE_COLLECTION).countDocuments({ roomId: roomId })
+    const totalPage = Math.ceil(totalDocs / limit)
+    return totalPage
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const messageModel = {
   MESSAGE_COLLECTION,
   deleteMessage,
@@ -196,5 +300,7 @@ export const messageModel = {
   getAllMessage,
   findMessageById,
   bulkDeleteMessageInRoom,
-  getLastMessageInRoom
+  getLastMessageInRoom,
+  getPaginatedMessages,
+  getTotalPageMessagePaginateInRoom
 }

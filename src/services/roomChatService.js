@@ -127,6 +127,7 @@ const getRoom = async (roomId) => {
     const room = await roomChatModel.findRoomById(roomId)
     if (!room) return { message: 'Room not found' }
     room.members = await roomchatMembersModel.findMembersInRoomChatId(roomId)
+    room.totalPage = await messageModel.getTotalPageMessagePaginateInRoom(roomId,30)
     return room
   }
   catch (error) {

@@ -42,8 +42,7 @@ const findReportByPostId = async (postId) => {
           userId: 1,
           type: 1,
           reason: 1,
-          'user._id': 1,
-          'user.name': 1,
+          'userName': '$user.name',
           createdAt: 1,
           updatedAt: 1
         }
@@ -60,7 +59,7 @@ const getReportPosts = async (page, limit) => {
     page = parseInt(page) || 1
     limit = parseInt(limit) || 10
     const skip = (page - 1) * limit
-    return GET_DB().collection(POST_REPORT_COLLECTION).aggregate([
+    const data= await GET_DB().collection(POST_REPORT_COLLECTION).aggregate([
       {
         $lookup: {
           from: 'posts',
@@ -94,11 +93,21 @@ const getReportPosts = async (page, limit) => {
       },
       { $sort: { createdAt: -1 } },
     ]).skip(skip).limit(limit).toArray()
+    const totalPage =
+      await GET_DB().collection(POST_REPORT_COLLECTION).countDocuments() / limit
+    return {
+      data,
+      page: page,
+      limit: limit,
+      totalPage: Math.ceil(totalPage),
+      totalReportPosts: await GET_DB().collection(POST_REPORT_COLLECTION).countDocuments()
+    }
   }
   catch (error) {
     throw error
   }
 }
+
 
 export const postReportModel = {
   POST_REPORT_COLLECTION,

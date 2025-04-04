@@ -58,10 +58,20 @@ const getReportPosts = async ({ page, limit }) => {
     throw error
   }
 }
-
+const getReportPostId = async ({ postId }) => {
+  try {
+    const result = await postReportModel.findReportByPostId(postId)
+    if (result.length === 0) return { message: 'No report posts' }
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const adminService = {
   setStatusAccount,
   createAccountAdmin,
   login,
-  getReportPosts
+  getReportPosts,
+  getReportPostId
 }

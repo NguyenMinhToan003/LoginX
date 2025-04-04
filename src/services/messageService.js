@@ -45,7 +45,10 @@ const getAllMessage = async (roomId, userId) => {
     if (!isMember?._id) return { message: 'You are not member of this room' }
     const messages = await messageModel.getAllMessage(roomId)
     if (!messages) return { message: 'No messages' }
-    return messages
+    
+    return {
+      messages
+    }
   }
   catch (error) {
     throw error
@@ -86,9 +89,25 @@ const bulkDeleteMessageInRoom = async (roomId) => {
   }
 }
 
+const getPaginateMessage = async (roomId, userId, page, limit) => {
+  try {
+    const room = await roomChatService.getRoom(roomId)
+    if (!room) return { message: 'Room not found' }
+    const isMember = room?.members.find(member => member._id === userId)
+    if (!isMember?._id) return { message: 'You are not member of this room' }
+    const messages = await messageModel.getPaginatedMessages(roomId, page, limit)
+    if (!messages) return { message: 'No messages' }
+    return messages
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const messageService = {
   createMessage,
   getAllMessage,
   deleteMessage,
-  bulkDeleteMessageInRoom
+  bulkDeleteMessageInRoom,
+  getPaginateMessage
 }
