@@ -1,10 +1,10 @@
-import Joi from 'joi';
-import { ObjectId } from 'mongodb';
-import { GET_DB } from '~/configs/db';
-import { userModel } from './userModel';
-import { postBlockModel } from './post_reportModel';
+import Joi from 'joi'
+import { ObjectId } from 'mongodb'
+import { GET_DB } from '~/configs/db'
+import { userModel } from './userModel'
 
-const POST_COLLECTION = 'posts';
+
+const POST_COLLECTION = 'posts'
 const POST_SCHEMA = Joi.object({
   content: Joi.string().required(),
   assets: Joi.array().items(Joi.object({
@@ -127,6 +127,7 @@ const findPostByQuery = async ({ content }) => {
 const updatePost = async (postId, data) => {
   try {
     data = await POST_SCHEMA.validateAsync(data, { abortEarly: false })
+    data.updatedAt = new Date()
     const result = await GET_DB().collection(POST_COLLECTION).updateOne({ _id: new ObjectId(postId) }, { $set: data })
     return result
   }
@@ -134,7 +135,6 @@ const updatePost = async (postId, data) => {
     throw error
   }
 }
-  
 
 export const postModel = {
   POST_COLLECTION,

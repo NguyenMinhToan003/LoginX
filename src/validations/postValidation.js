@@ -176,11 +176,7 @@ const editPost = async (req, res, next) => {
       postId: Joi.string().required(),
       content: Joi.string().required(),
       authorId: Joi.string().required(),
-      deleteFiles: Joi.array().items(Joi.object({
-        url: Joi.string().required(),
-        public_id: Joi.string().required(),
-        type: Joi.string().valid('image', 'video')
-      })),
+      deleteFiles: Joi.array().items(Joi.string()),
     })
     await schema.validateAsync(req.body, { abortEarly: false });
     next();

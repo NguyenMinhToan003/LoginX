@@ -280,17 +280,27 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
     if (!post) return { message: 'Post not found' }
     if (post.authorId !== authorId) return { message: 'Unauthorized' }
     const uploadCloudinary = await uploadFilesToCloudinary(assets)
-    await deleteFilesFromCloudinary(deleteFiles)
-    const postAssets = post.assets.filter(asset => !deleteFiles.includes(
-      file=> file.public_id === asset.public_id
-    ))
+    const deleteFilesFomatCloudinary = deleteFiles.map(file => {
+      return { public_id: file }
+
+    })
+    await deleteFilesFromCloudinary(deleteFilesFomatCloudinary)
+
+    let postAssets = []
+    post.assets.forEach(asset => {
+      const isCheckExist = deleteFilesFomatCloudinary.some(
+        item => item.public_id === asset.public_id
+      )
+      if (!isCheckExist) {
+        postAssets.push(asset)
+      }
+    })
     const data = {
-      authorId:authorId,
+      authorId: authorId,
       content,
       assets: [...postAssets, ...uploadCloudinary]
     }
     const result = await postModel.updatePost(postId, data)
-
     return {
       ...result,
       message: 'action edit post'

@@ -142,12 +142,13 @@ const getPostById = async (req, res) => {
 
 const editPost = async (req, res) => {
   try {
-    const { postId, content, authorId, deleteFiles=[] } = req.body
+    const { postId, content, authorId, deleteFiles = [] } = req.body
     const files = req.files ? req.files : null
     let assets = files ? files.map(file => ({
       url: file.path,
       public_id: file.filename
     })) : []
+
     const result = await postService.editPost(
       { postId, content, authorId, assets, deleteFiles });
     return res.status(200).json(result)

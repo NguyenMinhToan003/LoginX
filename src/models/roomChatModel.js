@@ -44,7 +44,6 @@ const findRoomById = async (roomId) => {
   }
 }
 
-
 const deleteRoom = async (roomId) => {
   try {
     return await GET_DB().collection(ROOMCHAT_COLLECTION).deleteOne({ _id: new ObjectId(roomId) })
