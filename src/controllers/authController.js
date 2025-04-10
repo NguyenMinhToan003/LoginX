@@ -97,11 +97,23 @@ const loginWithGoogle = async (req, res) => {
   }
 }
 
+const loginWithZalo = async (req, res) => {
+  try {
+    const { code } = req.query
+    const user = await authService.getAccessToken(code)
+    return res.status(200).json(user)
+  }
+  catch (error) {
+    
+  }
+}
+
 export const authController = {
   loginWithTwitter,
   loginWithGithub,
   loginWithGoogle,
   decodeTokenLogin,
   register,
-  login
+  login,
+  loginWithZalo
 }

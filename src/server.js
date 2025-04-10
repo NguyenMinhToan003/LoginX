@@ -60,13 +60,12 @@ const START_SERVER = () => {
   // Sử dụng router
   app.use('/api', APIs_v1)
   app.use('/api/v1', APIs_v1)
+  // render html in index
   app.route('/').get((req, res) => {
-    res.json({
-      message: 'Welcome to my server',
-      data: req.user || 'not user'
-    })
+    return res.send(`
+      <meta name="zalo-platform-site-verification" content="KC-z0fB29oHgtBGyxS4rQXd3vNJrjJChCpav" />
+      `)
   })
-
   app.use((req, res) => {
     res.status(404).json({
       message: 'Not found'

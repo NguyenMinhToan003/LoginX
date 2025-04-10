@@ -176,5 +176,5 @@ export const userController = {
   unfriend,
   getFriends,
   getUserById,
-  editUser
+  editUser,
 }

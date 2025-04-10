@@ -42,4 +42,7 @@ router.route('/login')
   .post(authValidation.login, authController.login)
 router.route('/register')
   .post(authValidation.register, authController.register)
+
+router.route('/zalo')
+  .get(authController.loginWithZalo)
 export const authRouter = router;

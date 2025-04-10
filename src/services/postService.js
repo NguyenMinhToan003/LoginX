@@ -276,7 +276,7 @@ const editPost = async ({ postId, content, authorId, assets, deleteFiles }) => {
   try {
 
     const post = await postModel.findPostById(postId)
-
+    console.log(deleteFiles)
     if (!post) return { message: 'Post not found' }
     if (post.authorId !== authorId) return { message: 'Unauthorized' }
     const uploadCloudinary = await uploadFilesToCloudinary(assets)

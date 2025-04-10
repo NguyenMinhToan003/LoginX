@@ -15,7 +15,8 @@ router.route('/edit')
     uploadMulter.array('files', 1),
     userValidation.editUser,
     userController.editUser
-  )
+)
+
 router.route('/all')
   .get(userController.getAllUser)
 router.route('/request-friend')
