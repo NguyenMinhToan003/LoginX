@@ -31,6 +31,8 @@ router.route('/delete')
 router.route('/leave')
   .post(roomChatValidation.leaveRoom, roomChatController.leaveRoom)
 // cap nhat thong tin phong chat
+router.route('/search')
+  .get(roomChatValidation.searchRooms, roomChatController.searchRooms)
 router.route('/update-info')
   .post(
     uploadMulter.array('files', 1),

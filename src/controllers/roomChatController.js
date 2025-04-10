@@ -113,6 +113,16 @@ const updateInfoRoom = async (req, res) => {
   }
 }
 
+const searchRooms = async (req, res) => {
+  try {
+    const { keyword, type } = req.query
+    const result = await roomChatService.searchRooms(keyword, type)
+    return res.status(200).json(result)
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
 
 
 export const roomChatController = {
@@ -124,4 +134,5 @@ export const roomChatController = {
   getRoomChatByUserId,
   leaveRoom,
   updateInfoRoom,
+  searchRooms
 }

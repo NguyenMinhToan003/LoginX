@@ -137,12 +137,16 @@ const getAccessToken = async (code) => {
       app_id: '3009287701854810432',
       grant_type: 'authorization_code'
     }
-    const response = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token', payload, {
+    const response = await axios.post(
+      'https://oauth.zaloapp.com/v4/oa/access_token',
+      payload,
+      {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'secret_key': 'hIIX3QLrWm5vL7D8V4w4'
       }
     })
+    console.log(payload)
     return response.data
   }
   catch (error) {

@@ -221,6 +221,21 @@ const updateInfoRoom = async (roomId, name, file, userAction) => {
   }
 }
 
+const searchRooms = async (keyword, type) => {
+  try {
+    let rooms =[]
+    if (type === 'all') {
+      rooms = await roomChatModel.findRoomByQuery({ name: { $regex: keyword, $options: 'i' } })
+    }
+    else {
+      rooms = await roomChatModel.findRoomByQuery({ name: { $regex: keyword, $options: 'i' }, type })
+    }
+    return rooms
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const roomChatService = {
   createRoom,
@@ -231,4 +246,5 @@ export const roomChatService = {
   getRoomChatByUserId,
   leaveRoom,
   updateInfoRoom,
+  searchRooms
 }

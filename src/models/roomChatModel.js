@@ -74,7 +74,14 @@ const updateInfoRoom = async (roomId, name, avatar) => {
   }
 }
 
-
+const findRoomByQuery = async (query) => {
+  try {
+    return await GET_DB().collection(ROOMCHAT_COLLECTION).find(query).toArray()
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const roomChatModel = {
   ROOMCHAT_COLLECTION,
@@ -84,4 +91,5 @@ export const roomChatModel = {
   deleteRoom,
   leaveRoom,
   updateInfoRoom,
+  findRoomByQuery,
 }

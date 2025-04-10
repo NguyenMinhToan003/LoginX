@@ -110,6 +110,19 @@ const updateInfoRoom = async (req, res, next) => {
     return res.status(400).json({ message: error.message })
   }
 }
+const searchRooms = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      keyword: Joi.string().required(),
+      type: Joi.string().valid('public', 'private','all').required(),
+    })
+    await schema.validateAsync(req.query, { abortEarly: false })
+    next()
+  }
+  catch(error) {
+    return res.status(400).json({ message: error.message })
+  }
+}
 
 export const roomChatValidation = {
   createRoom,
@@ -119,5 +132,6 @@ export const roomChatValidation = {
   deleteRoom,
   getRoomChatByUserId,
   leaveRoom,
-  updateInfoRoom
+  updateInfoRoom,
+  searchRooms
 }
