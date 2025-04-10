@@ -129,12 +129,22 @@ const loginWithGoogle = async (user) => {
     throw error
   }
 }
+// https://loginx.onrender.com/api/auth/zalo?oa_id=1929322143428298323&code=o9K3UMl-wIkgdcvFHQoLNQEjRNaxz9WZvwaRHHZys3c3e2fSSyMf0u_4OIbv-wG7vgzPMpFEhGN0Z5PAKTQlBA6-AqzBbUPLZRetGIpbnndyiqToDFMoQlEuSIC5ZAD6u-LORK3NdK-9Y6CUNjVWTvF46pHDYVjunxSoH7VGaN24zb171ipzGOVFFc5VzAKwpQb1Mp7OqXxovIG-59NZ7PVOPWK2sBS1dyyp4qYDp76uyamIHD75GTR1UHfGZD4RteL53qEJuHl9tcWYVE2s4e_QHoaOahSuagmIDXQopwNSnKMw64YEyDyO7IK38v_LnnzTzqspcwwUxM_iPgo0WiJ1JlC0qF6crFiqlc5oCixh6VQcDAPSVipJamLExna3glkE15Ea4aQp-SaOCTia88Ntnr0ufbeEpvN9UUDQlL0qxim2
 
 const getAccessToken = async (code) => {
   try {
     const payload = {
-      code: code,
+      code: 'o9K3UMl-wIkgdcvFHQoLNQEjRNaxz9WZvwaRHHZys3c3e2fSSyMf0u_4OIbv-wG7vgzPMpFEhGN0Z5PAKTQlBA6-AqzBbUPLZRetGIpbnndyiqToDFMoQlEuSIC5ZAD6u-LORK3NdK-9Y6CUNjVWTvF46pHDYVjunxSoH7VGaN24zb171ipzGOVFFc5VzAKwpQb1Mp7OqXxovIG-59NZ7PVOPWK2sBS1dyyp4qYDp76uyamIHD75GTR1UHfGZD4RteL53qEJuHl9tcWYVE2s4e_QHoaOahSuagmIDXQopwNSnKMw64YEyDyO7IK38v_LnnzTzqspcwwUxM_iPgo0WiJ1JlC0qF6crFiqlc5oCixh6VQcDAPSVipJamLExna3glkE15Ea4aQp-SaOCTia88Ntnr0ufbeEpvN9UUDQlL0qxim2',
+      app_id: '3009287701854810432',
+      grant_type: 'authorization_code'
     }
+    const response = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'secret_key': 'hIIX3QLrWm5vL7D8V4w4'
+      }
+    })
+    return response.data
   }
   catch (error) {
     throw error
