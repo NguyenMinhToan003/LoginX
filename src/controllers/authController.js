@@ -80,10 +80,9 @@ const login = async (req, res) => {
 // login voi zalo
 const loginWithZaloCallback = async (req, res) => {
   try {
-
     const { code } = req.query
     const result = await authService.loginWithZalo(code)
-    console.log(result)
+    console.log('zalo', result)
     if (result?.insertedId) {
         const token = await genarateToken({_id:result.insertedId})
         return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
