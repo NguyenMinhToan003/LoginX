@@ -153,7 +153,48 @@ const getAccessToken = async (code) => {
     throw error
   } 
 }
-
+const loginWithZalo = async (code) => {
+  try {
+    const data = {
+      'code': code,
+      'app_id': '3009287701854810432',
+      'grant_type': 'authorization_code',
+    }
+    const token = await axios.post('https://oauth.zaloapp.com/v4/access_token',
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'secret_key':'hIIX3QLrWm5vL7D8V4w4'
+        }
+      }
+    )
+    const user = await axios.get(`https://graph.zalo.me/v2.0/me?fields=id,name,picture`, {
+      headers: {
+        'access_token': token.data.access_token
+      }
+    })
+    const result = await userModel.findUserByIdSocial(user.data.id)
+    if(result) {
+      return result
+    }
+    const dataUser = {
+      _id: uuidv4(),
+      idSocial: user.data.id,
+      name: user.data.name,
+      picture: {
+        url: user.data.picture.data.url,
+        public_id: 'empty',
+        type: 'image'
+      },
+      typeAccount: 'zalo',
+    }
+    return await userModel.createUser(dataUser)
+  }
+  catch (error) {
+    throw error
+  }
+}
 
 export const authService = {
   register,
@@ -162,5 +203,6 @@ export const authService = {
   loginWithGithub,
   loginWithGoogle,
   decodeTokenLogin,
-  getAccessToken
+  getAccessToken,
+  loginWithZalo
 }

@@ -12,7 +12,7 @@ export const userSchema = Joi.object({
     name: Joi.string().default(null),
   }),
   statusAccount: Joi.string().default('default').valid('DEFAULT','BLOCK'),
-  typeAccount: Joi.string().required().valid('local', 'twitter','github','google'),
+  typeAccount: Joi.string().required().valid('local', 'twitter','github','google','zalo'),
   password: Joi.string().default(null),
   email: Joi.string().email().default(null),
   phone: Joi.string().default(null),

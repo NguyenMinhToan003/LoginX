@@ -77,6 +77,26 @@ const login = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 }
+
+const loginWithZaloCallback = async (req, res) => {
+  try {
+
+    const { code } = req.query
+    const result = await authService.loginWithZalo(code)
+    console.log(result)
+    if (result?.insertedId) {
+        const token = await genarateToken({_id:result.insertedId})
+        return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
+      }
+      const token = await genarateToken({_id:result._id})
+      return res.redirect(`${process.env.FRONTEND_ENDPOINT}/login?token=${token}`);
+
+  }
+  catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+}
+
 const loginWithGoogle = async (req, res) => {
   try {
      const user = req.user
@@ -104,9 +124,11 @@ const loginWithZalo = async (req, res) => {
     return res.status(200).json(user)
   }
   catch (error) {
-    
+    return res.status(400).json({ message: error.message });
   }
 }
+
+
 
 export const authController = {
   loginWithTwitter,
@@ -115,5 +137,6 @@ export const authController = {
   decodeTokenLogin,
   register,
   login,
-  loginWithZalo
+  loginWithZalo,
+  loginWithZaloCallback
 }

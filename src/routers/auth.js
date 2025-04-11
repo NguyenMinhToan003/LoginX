@@ -1,8 +1,8 @@
 import express from 'express'
 import passport from 'passport'
 import { authController } from '../controllers/authController.js';
-import { userController } from '../controllers/userController.js';
 import { authValidation } from '~/validations/authValidation.js';
+import axios from 'axios';
 const router = express.Router();
 
 // Đăng nhập với Twitter
@@ -45,4 +45,8 @@ router.route('/register')
 
 router.route('/zalo')
   .get(authController.loginWithZalo)
+
+router.route('/zalo/callback')
+  .get(authController.loginWithZaloCallback)
+
 export const authRouter = router;
