@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 const loginWithTwitter = async (user) => {
   try {
    
-    const result = await userModel.findUserByIdSocial(user.id)
+    const result = await userModel.findUserByIdSocial(user.id, 'twitter')
     if(result) {
       return result
     }
@@ -31,7 +31,7 @@ const loginWithTwitter = async (user) => {
 
 const loginWithGithub = async (user) => {
     try {
-      const result = await userModel.findUserByIdSocial(user.id)
+      const result = await userModel.findUserByIdSocial(user.id, 'github')
     if(result) {
       return result
     }
@@ -107,7 +107,7 @@ const loginLocal = async ({ email, password }) => {
 }
 const loginWithGoogle = async (user) => {
   try {
-      const result = await userModel.findUserByIdSocial(user.id)
+      const result = await userModel.findUserByIdSocial(user.id,'google')
     if(result) {
       return result
     }
@@ -174,8 +174,12 @@ const loginWithZalo = async (code) => {
         'access_token': token.data.access_token
       }
     })
+    if(user.data.error) {
+      return user.data
+    }
     console.log('user', user.data)
-    const result = await userModel.findUserByIdSocial(user.data.id)
+    const result = await userModel.findUserByIdSocial(user.data.id, 'zalo')
+    console.log('result', result)
 
     if(result) {
       return result

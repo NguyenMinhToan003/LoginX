@@ -83,6 +83,9 @@ const loginWithZaloCallback = async (req, res) => {
     const { code } = req.query
     console.log('code', code)
     const result = await authService.loginWithZalo(code)
+    if (result?.error) {
+      return res.status(404).json(result)
+    }
     console.log('result zalo', result)
     if (result?.insertedId) {
         const token = await genarateToken({_id:result.insertedId})

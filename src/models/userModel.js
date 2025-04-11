@@ -83,9 +83,12 @@ const editUser = async (id, data) => {
   }
 }
 
-const findUserByIdSocial = async (idSocial) => {
+const findUserByIdSocial = async (idSocial,type) => {
   try {
-    const user = await GET_DB().collection(USER_COLLECTION).findOne({ idSocial })
+    const user = await GET_DB().collection(USER_COLLECTION).findOne({
+      idSocial: idSocial,
+      typeAccount: type
+    })
     return user
   }
   catch (error) {
