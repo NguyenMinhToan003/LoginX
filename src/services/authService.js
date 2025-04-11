@@ -174,6 +174,7 @@ const loginWithZalo = async (code) => {
         'access_token': token.data.access_token
       }
     })
+    console.log('user', user.data)
     const result = await userModel.findUserByIdSocial(user.data.id)
 
     if(result) {
