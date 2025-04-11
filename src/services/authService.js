@@ -175,7 +175,7 @@ const loginWithZalo = async (code) => {
       }
     })
     const result = await userModel.findUserByIdSocial(user.data.id)
-    console.log('check result zalo ', result)
+
     if(result) {
       return result
     }
