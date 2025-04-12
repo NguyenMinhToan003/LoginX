@@ -22,10 +22,15 @@ export const uploadFilesToCloudinary = async (files) => {
         folder: 'CHAT_LOGIN_X',
         resource_type: 'auto'
       })
+
+      const type = result.resource_type === 'image'
+        ? result.format ==='png' || result.format ==='jpg' || result.format ==='jpeg'
+          ? 'image' : 'raw'
+        : result.resource_type
       uploadedFiles.push({
         url: result.secure_url,
         public_id: result.public_id,
-        type: result.resource_type,
+        type: type,
         name: result.original_filename,
       })
       await removeFile(file.url)
