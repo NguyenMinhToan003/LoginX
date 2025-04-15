@@ -1,5 +1,5 @@
 import { deleteFilesFromCloudinary, uploadFilesToCloudinary } from '~/configs/cloudinary.js'
-import { messageModel } from '../models/messagesModel.js'
+import { messageModel } from '~/models/messagesModel.js'
 import { roomChatService } from './roomChatService.js'
 
 const createMessage = async ({roomId, sender, content,followMessageId, assets,embedPostId }) => {

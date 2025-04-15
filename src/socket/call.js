@@ -53,6 +53,7 @@ export const CallVideo = (socket, io) => {
 
   // Xử lý yêu cầu gọi video
   socket.on('call-video', (data) => {
+    console.log('call-video', data);
     io.to(data.receiver.socketId).emit('iscomming-call', {
       isRinging: true,
       sender: {

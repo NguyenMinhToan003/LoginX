@@ -1,6 +1,6 @@
 import axios from "axios";
-import { comparePassword, hashPassword, verifyToken } from "../middleware/jwt/token.js"
-import { userModel } from "../models/userModel.js"
+import { comparePassword, hashPassword, verifyToken } from "~/middleware/jwt/token.js"
+import { userModel } from "~/models/userModel.js"
 import { v4 as uuidv4 } from 'uuid';
 
 const loginWithTwitter = async (user) => {

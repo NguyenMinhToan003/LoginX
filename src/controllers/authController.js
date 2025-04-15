@@ -1,5 +1,5 @@
 import { genarateToken } from "~/middleware/jwt/token.js";
-import { authService } from "../services/authService.js"
+import { authService } from "~/services/authService.js"
 
 const loginWithTwitter = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
-import { userModel } from "../models/userModel.js"
-import { userService } from "../services/userService.js"
+import { userModel } from "~/models/userModel.js"
+import { userService } from "~/services/userService.js"
 const getDatUser = async (req,res) => {
   try {
     const { id } = req.query

@@ -1,6 +1,6 @@
 import express from 'express'
-import { messageValidation } from '../validations/messageValidation.js';
-import { messageController } from '../controllers/messageController.js';
+import { messageValidation } from '~/validations/messageValidation.js';
+import { messageController } from '~/controllers/messageController.js';
 import { uploadMulter } from '~/middleware/multer/multer.js';
 
 

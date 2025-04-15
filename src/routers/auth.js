@@ -1,6 +1,6 @@
 import express from 'express'
 import passport from 'passport'
-import { authController } from '../controllers/authController.js';
+import { authController } from '~/controllers/authController.js';
 import { authValidation } from '~/validations/authValidation.js';
 import axios from 'axios';
 const router = express.Router();

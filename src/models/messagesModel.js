@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { GET_DB } from "../configs/db.js";
+import { GET_DB } from "~/configs/db.js";
 import { ObjectId } from "mongodb";
 import { userModel } from "./userModel.js";
 import { postModel } from "./postModel.js";

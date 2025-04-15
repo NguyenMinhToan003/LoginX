@@ -1,7 +1,7 @@
 import express from 'express'
 
-import { userController } from '../controllers/userController.js';
-import { userValidation } from '../validations/userValidation.js';
+import { userController } from '~/controllers/userController.js';
+import { userValidation } from '~/validations/userValidation.js';
 import { uploadMulter } from '~/middleware/multer/multer.js';
 const router = express.Router();
 

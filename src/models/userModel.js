@@ -1,5 +1,5 @@
 import Joi from "joi"
-import { GET_DB } from "../configs/db.js"
+import { GET_DB } from "~/configs/db.js"
 
 const USER_COLLECTION = 'users'
 export const userSchema = Joi.object({
