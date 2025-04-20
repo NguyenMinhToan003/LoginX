@@ -125,7 +125,7 @@ const editUser = async (req, res) => {
       address,
       userName,
       background,
-      
+      work,
       link,
       bio,
       history
@@ -149,6 +149,7 @@ const editUser = async (req, res) => {
         phone,
         email,
         address,
+        work,
         userName,
         background,
         link,

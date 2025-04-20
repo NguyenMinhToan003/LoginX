@@ -164,7 +164,6 @@ const editUser = async (userId, data) => {
     })
     delete user._id // xoa id cu di de khong bi trung lap khi update
     delete user.createdAt // xoa createdAt di de khong bi trung lap khi update
-    console.log(user)
     const result = await userModel.editUser(userId, user)
     return result
   }

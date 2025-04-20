@@ -118,6 +118,7 @@ const editUser = async (req, res, next) => {
       address: Joi.string(),
       userName: Joi.string(),
       background: Joi.string(),
+      work: Joi.string(),
       link: Joi.array().items(Joi.string()),
       bio: Joi.string(),
       history: Joi.string(),
